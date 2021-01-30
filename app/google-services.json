@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "46326325755",
+    "firebase_url": "https://ruby-talk-sense.firebaseio.com",
+    "project_id": "ruby-talk-sense",
+    "storage_bucket": "ruby-talk-sense.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:46326325755:android:421583a5e1f41e26a42b5e",
+        "android_client_info": {
+          "package_name": "net.trejj.rubytalksense"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "46326325755-oaod6g06avd6gqpis6v8fa6biik0mdnc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2mXAWwU92I4p-7y0ZGk2W21qj2F9pRiw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "46326325755-oaod6g06avd6gqpis6v8fa6biik0mdnc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="5"
+    android:background="@drawable/backround">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:paddingTop="10dp"
+        android:layout_weight="1"
+        >
+
+        <TextView
+            android:id="@+id/remoteUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="10dp"
+            android:text="+918825627181"
+            android:textColor="@color/sinch_purple"
+            android:textSize="28sp"/>
+
+        <TextView
+            android:id="@+id/callState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="Ringing"
+            android:textColor="@color/sinch_purple"
+            android:textSize="16sp"
+            android:textAllCaps="true"
+            />
+
+        <Chronometer
+            android:id="@+id/chronometer"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/sinch_purple"
+            android:text="00:00"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/callDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="4dp"
+            android:text="00:00"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="@color/sinch_purple"
+            android:textSize="16sp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="0dip"
+        android:layout_weight="3"
+        android:contentDescription="Call background">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.skyfishjy.library.RippleBackground
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/content"
+                app:rb_color="#0099CC"
+                app:rb_radius="32dp"
+                app:rb_rippleAmount="4"
+                app:rb_duration="3000"
+                app:rb_scale="6">
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_centerInParent="true"
+                    android:id="@+id/centerImage"
+                    app:srcCompat="@drawable/ic_antenna"/>
+            </com.skyfishjy.library.RippleBackground>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomPanel"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_weight="1">
+
+        <ImageButton
+            android:visibility="gone"
+            android:id="@+id/record"
+            app:srcCompat="@drawable/ic_record_voice_over_black_24dp"
+            android:layout_width="100dp"
+            android:tint="@color/grey_line"
+            android:layout_marginEnd="5dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="5dp" />
+
+        <ImageButton
+            android:id="@+id/speaker"
+            android:background="@color/blue"
+            app:srcCompat="@drawable/ic_speaker_new"
+            android:layout_width="100dp"
+            android:tint="@color/grey_line"
+            android:layout_marginEnd="5dp"
+            android:padding="5dp"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="5dp" />
+
+
+        <ImageButton
+            android:padding="5dp"
+            android:background="@color/red"
+            android:id="@+id/hangupButton"
+            app:srcCompat="@drawable/ic_call"
+            android:layout_width="100dp"
+            android:tint="@color/grey_line"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+</LinearLayout>

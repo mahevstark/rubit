@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/content_layout"
+    android:animateLayoutChanges="true"
+    android:visibility="visible"
+    android:orientation="vertical"
+    android:layout_above="@+id/changeColor"
+    android:layout_width="match_parent"
+    android:clickable="false"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <LinearLayout
+        android:background="@color/white"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical" />
+
+            <include
+                android:visibility="gone"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                layout="@layout/no_contacts_layout" />
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <include
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        layout="@layout/keyboard_screen" />
+
+    <com.skydoves.elasticviews.ElasticImageView
+        android:visibility="visible"
+        android:id="@+id/dialpad"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:src="@drawable/ic_dial_pad"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        app:imageView_scale="0.7"
+        app:imageView_duration="200"/>
+
+
+
+
+</RelativeLayout>
