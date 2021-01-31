@@ -294,6 +294,10 @@ public class SinchService extends Service implements VideoCallListener, Proximit
 
     public class SinchServiceInterface extends Binder {
         public Call callPhoneNumber(String phoneNumber) {
+
+            if (mSinchClient == null) {
+                createClient();
+            }
             return mSinchClient.getCallClient().callPhoneNumber(phoneNumber);
         }
 

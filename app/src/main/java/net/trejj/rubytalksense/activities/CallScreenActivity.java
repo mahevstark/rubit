@@ -305,7 +305,11 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
             //String endMsg = "Call ended: " + call.getDetails().toString();
             //Toast.makeText(CallScreenActivity.this, endMsg, Toast.LENGTH_LONG).show();
             stopTimer();
-            chronometer.stop();
+            try {
+                chronometer.stop();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
             CallDetails details = call.getDetails();
             RealmHelper.getInstance().updateCallInfoOnCallEnded(call.getCallId(), details.getDuration());
             endCall();

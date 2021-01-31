@@ -32,7 +32,7 @@ android {
         resValue 'string', "website", "http://devlomi.com/"
         resValue 'string', "email", ""
 
-        resValue 'string', "agora_app_id", "f03d980b3c45445dafd17d8c13fb335b"
+        resValue 'string', "agora_app_id", "3301976d4fe84932b2a2bbd4d24e3a10"
 
         resValue 'integer', "max_group_call_count", "11"
 
