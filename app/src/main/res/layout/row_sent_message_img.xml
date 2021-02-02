@@ -7,7 +7,7 @@
     android:layout_marginBottom="@dimen/margin_bottom_message"
     android:orientation="vertical">
 
-    <net.trejj.rubytalksense.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint
+    <net.trejj.talk.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint
         android:id="@+id/container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -99,6 +99,6 @@
             </LinearLayout>
 
         </RelativeLayout>
-    </net.trejj.rubytalksense.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint>
+    </net.trejj.talk.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint>
 </LinearLayout>
 

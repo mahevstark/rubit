@@ -29,7 +29,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
 
-            <net.trejj.rubytalksense.views.TextViewWithShapeBackground
+            <net.trejj.talk.views.TextViewWithShapeBackground
                 android:id="@+id/tv_text_status"
                 android:layout_width="55dp"
                 android:layout_height="55dp"

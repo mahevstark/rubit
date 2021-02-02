@@ -10,7 +10,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId "net.trejj.rubytalksense"
+        applicationId "net.trejj.talk"
         minSdkVersion 17
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 24
@@ -19,8 +19,8 @@ android {
 
         vectorDrawables.useSupportLibrary = true
 
-        resValue 'string', "app_name", "RubyTalk"
-        resValue 'string', "app_folder_name", "RubyTalk"
+        resValue 'string', "app_name", "TrejjTalk"
+        resValue 'string', "app_folder_name", "TrejjTalk"
 
         resValue 'string', "privacy_policy_link", ""
 

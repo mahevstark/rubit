@@ -3,33 +3,33 @@
 <preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
 
     <header
-        android:fragment="net.trejj.rubytalksense.activities.settings.ProfilePreferenceFragment"
+        android:fragment="net.trejj.talk.activities.settings.ProfilePreferenceFragment"
         android:icon="@drawable/ic_account_circle"
         android:title="@string/pref_header_profile" />
 
     <header
-        android:fragment="net.trejj.rubytalksense.activities.settings.SettingsActivity$NotificationPreferenceFragment"
+        android:fragment="net.trejj.talk.activities.settings.SettingsActivity$NotificationPreferenceFragment"
         android:icon="@drawable/ic_notifications"
         android:title="@string/pref_header_notifications" />
 
     <header
-        android:fragment="net.trejj.rubytalksense.activities.settings.SecurityPreferencesFragment"
+        android:fragment="net.trejj.talk.activities.settings.SecurityPreferencesFragment"
         android:icon="@drawable/ic_security"
         android:title="@string/security" />
 
 
     <header
-        android:fragment="net.trejj.rubytalksense.activities.settings.SettingsActivity$ChatSettingsPreferenceFragment"
+        android:fragment="net.trejj.talk.activities.settings.SettingsActivity$ChatSettingsPreferenceFragment"
         android:icon="@drawable/ic_chat"
         android:title="@string/pref_header_chat" />
 
     <header
-        android:fragment="net.trejj.rubytalksense.activities.settings.PrivacyPolicyFragment"
+        android:fragment="net.trejj.talk.activities.settings.PrivacyPolicyFragment"
         android:icon="@drawable/ic_policy_24px"
         android:title="@string/privacy_policy" />
 
     <header
-        android:fragment="net.trejj.rubytalksense.activities.settings.AboutFragment"
+        android:fragment="net.trejj.talk.activities.settings.AboutFragment"
         android:icon="@drawable/ic_info"
         android:title="@string/pref_header_about" />
 </preference-headers>

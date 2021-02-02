@@ -8,7 +8,7 @@
     tools:background="@drawable/background_hd">
 
 
-    <net.trejj.rubytalksense.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint
+    <net.trejj.talk.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint
         android:id="@+id/container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
 
 
 
-                <net.trejj.rubytalksense.views.DevlomiSeekbar
+                <net.trejj.talk.views.DevlomiSeekbar
                     android:id="@+id/voice_seekbar"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
@@ -132,7 +132,7 @@
                 </FrameLayout>
             </RelativeLayout>
         </FrameLayout>
-    </net.trejj.rubytalksense.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint>
+    </net.trejj.talk.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint>
 
 
 </RelativeLayout>

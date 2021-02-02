@@ -71,7 +71,7 @@
         android:orientation="vertical">
 
 
-        <net.trejj.rubytalksense.views.TextViewDrawableCompat
+        <net.trejj.talk.views.TextViewDrawableCompat
             android:id="@+id/tv_send_link_via_fireapp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -89,7 +89,7 @@
             app:drawableStartCompat="@drawable/ic_forward"
             app:drawableTintCompat="@color/iconTintColor" />
 
-        <net.trejj.rubytalksense.views.TextViewDrawableCompat
+        <net.trejj.talk.views.TextViewDrawableCompat
             android:id="@+id/tv_copy_link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -108,7 +108,7 @@
             android:textColor="@color/colorText"
             app:drawableTintCompat="@color/iconTintColor" />
 
-        <net.trejj.rubytalksense.views.TextViewDrawableCompat
+        <net.trejj.talk.views.TextViewDrawableCompat
             android:id="@+id/tv_share_link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
             android:textColor="@color/colorText"
             app:drawableTintCompat="@color/iconTintColor" />
 
-        <net.trejj.rubytalksense.views.TextViewDrawableCompat
+        <net.trejj.talk.views.TextViewDrawableCompat
             android:id="@+id/tv_revoke_link"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

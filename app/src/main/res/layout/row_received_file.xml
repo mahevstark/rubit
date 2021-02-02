@@ -9,7 +9,7 @@
     android:orientation="vertical"
     tools:background="@drawable/background_hd">
 
-    <net.trejj.rubytalksense.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint
+    <net.trejj.talk.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint
         android:id="@+id/container"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
@@ -113,7 +113,7 @@
         </RelativeLayout>
 
 
-    </net.trejj.rubytalksense.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint>
+    </net.trejj.talk.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint>
 
 
 </FrameLayout>

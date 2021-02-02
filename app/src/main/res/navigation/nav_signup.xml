@@ -8,7 +8,7 @@
     <fragment
 
         android:id="@+id/enterPhoneNumberFragment"
-        android:name="net.trejj.rubytalksense.activities.authentication.EnterPhoneNumberFragment"
+        android:name="net.trejj.talk.activities.authentication.EnterPhoneNumberFragment"
         android:label="fragment_enter_phone_number"
         tools:layout="@layout/fragment_enter_phone_number" >
         <action
@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/verifyPhoneFragment"
-        android:name="net.trejj.rubytalksense.activities.authentication.VerifyPhoneFragment"
+        android:name="net.trejj.talk.activities.authentication.VerifyPhoneFragment"
         android:label="fragment_verify_phone"
         tools:layout="@layout/fragment_verify_phone" >
     </fragment>

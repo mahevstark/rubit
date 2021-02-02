@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="net.trejj.rubytalksense">
+    package="net.trejj.talk">
 
     <!-- PERMISSIONS -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -220,7 +220,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="net.trejj.rubytalksense.activities.main.MainActivity" />
+                android:value="net.trejj.talk.activities.main.MainActivity" />
         </activity>
 
         <activity

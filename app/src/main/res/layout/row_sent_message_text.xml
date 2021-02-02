@@ -7,7 +7,7 @@
     >
 
 
-    <net.trejj.rubytalksense.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint
+    <net.trejj.talk.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint
         android:id="@+id/container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -74,6 +74,6 @@
                 app:srcCompat="@drawable/ic_check" />
 
         </LinearLayout>
-    </net.trejj.rubytalksense.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint>
+    </net.trejj.talk.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint>
 
 </LinearLayout>

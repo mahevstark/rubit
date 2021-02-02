@@ -25,7 +25,7 @@
           ~ Use fitsSystemWindows here to extend appbar background behind status bar, which can
           ~ avoid the visual glitch of showing a gap above appbar.
           -->
-        <net.trejj.rubytalksense.views.IgnoreBottomInsetFrameLayout
+        <net.trejj.talk.views.IgnoreBottomInsetFrameLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                 </LinearLayout>
 
             </androidx.appcompat.widget.Toolbar>
-        </net.trejj.rubytalksense.views.IgnoreBottomInsetFrameLayout>
+        </net.trejj.talk.views.IgnoreBottomInsetFrameLayout>
 
 
     </LinearLayout>

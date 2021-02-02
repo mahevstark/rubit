@@ -8,7 +8,7 @@
     android:paddingLeft="6dp">
 
 
-    <net.trejj.rubytalksense.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint
+    <net.trejj.talk.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint
         android:layout_gravity="left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,5 +37,5 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:text="05:08" />
-    </net.trejj.rubytalksense.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint>
+    </net.trejj.talk.views.backgroundtintlayouts.LinearLayoutWithBackgroundTint>
 </FrameLayout>

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="net.trejj.rubytalksense.activities.settings.SettingsFragment"
+        android:name="net.trejj.talk.activities.settings.SettingsFragment"
         android:label="@string/Settings">
         <action
             android:id="@+id/action_settingsFragment_to_profilePreferenceFragment"
@@ -54,27 +54,27 @@
     </fragment>
     <fragment
         android:id="@+id/profilePreferenceFragment"
-        android:name="net.trejj.rubytalksense.activities.settings.ProfilePreferenceFragment"
+        android:name="net.trejj.talk.activities.settings.ProfilePreferenceFragment"
         android:label="@string/profile" />
     <fragment
         android:id="@+id/notificationPreferenceFragment"
-        android:name="net.trejj.rubytalksense.activities.settings.NotificationPreferenceFragment"
+        android:name="net.trejj.talk.activities.settings.NotificationPreferenceFragment"
         android:label="@string/notifications" />
     <fragment
         android:id="@+id/chatSettingsPreferenceFragment"
-        android:name="net.trejj.rubytalksense.activities.settings.ChatSettingsPreferenceFragment"
+        android:name="net.trejj.talk.activities.settings.ChatSettingsPreferenceFragment"
         android:label="@string/chat" />
     <fragment
         android:id="@+id/securityPreferencesFragment"
-        android:name="net.trejj.rubytalksense.activities.settings.SecurityPreferencesFragment"
+        android:name="net.trejj.talk.activities.settings.SecurityPreferencesFragment"
         android:label="@string/security"
         tools:layout="@layout/fragment_security" />
     <fragment
         android:id="@+id/privacyPolicyFragment"
-        android:name="net.trejj.rubytalksense.activities.settings.PrivacyPolicyFragment"
+        android:name="net.trejj.talk.activities.settings.PrivacyPolicyFragment"
         android:label="@string/privacy_policy" />
     <fragment
         android:id="@+id/aboutFragment"
-        android:name="net.trejj.rubytalksense.activities.settings.AboutFragment"
+        android:name="net.trejj.talk.activities.settings.AboutFragment"
         android:label="@string/about" />
 </navigation>

@@ -21,7 +21,7 @@
 
 
 
-    <net.trejj.rubytalksense.views.CallingGridLayout
+    <net.trejj.talk.views.CallingGridLayout
         android:id="@+id/remote_view"
         android:layout_width="0dp"
         android:layout_height="0dp"

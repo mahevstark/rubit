@@ -24,7 +24,7 @@
         app:srcCompat="@drawable/ic_insert_emoticon_black" />
 
 
-    <net.trejj.rubytalksense.views.ChatEditText
+    <net.trejj.talk.views.ChatEditText
         android:textColor="@color/colorText"
         android:id="@+id/et_message"
         android:layout_width="0dp"

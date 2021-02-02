@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "46326325755-139k21lpg9vofsjbbkr0tg6piecpgc8j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.trejj.rubytalksense",
+            "certificate_hash": "aababec64513670897f61436d789ec04959bbdb8"
+          }
+        },
+        {
+          "client_id": "46326325755-d5uilmpvefh4tqngq0ql4mp9ukcqbgli.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "net.trejj.rubytalksense",
+            "certificate_hash": "67c39ea52e733f33910226c16b0a21461c0a7eeb"
+          }
+        },
+        {
           "client_id": "46326325755-oaod6g06avd6gqpis6v8fa6biik0mdnc.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -30,6 +46,49 @@
             {
               "client_id": "46326325755-oaod6g06avd6gqpis6v8fa6biik0mdnc.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "46326325755-tal4losmf8kqmougue9srh94oqh5c756.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.trejj.rubytalksense"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:46326325755:android:ac9866d7ec694d58a42b5e",
+        "android_client_info": {
+          "package_name": "net.trejj.talk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "46326325755-oaod6g06avd6gqpis6v8fa6biik0mdnc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2mXAWwU92I4p-7y0ZGk2W21qj2F9pRiw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "46326325755-oaod6g06avd6gqpis6v8fa6biik0mdnc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "46326325755-tal4losmf8kqmougue9srh94oqh5c756.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.trejj.rubytalksense"
+              }
             }
           ]
         }

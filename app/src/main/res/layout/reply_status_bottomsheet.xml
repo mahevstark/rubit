@@ -33,7 +33,7 @@
         tools:text="8 Users" />
 
 
-    <net.trejj.rubytalksense.views.AttachmentView
+    <net.trejj.talk.views.AttachmentView
         android:id="@+id/attachment_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
             app:slide_to_cancel_margin_right="10dp"
             app:slide_to_cancel_text="Slide To Cancel" />
 
-        <net.trejj.rubytalksense.views.AnimButton
+        <net.trejj.talk.views.AnimButton
             android:id="@+id/record_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

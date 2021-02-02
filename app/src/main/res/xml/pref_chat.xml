@@ -19,21 +19,21 @@
 
     <PreferenceCategory android:title="@string/media_auto_download_title">
 
-        <net.trejj.rubytalksense.activities.settings.SettingsMultiSelectPreference
+        <net.trejj.talk.activities.settings.SettingsMultiSelectPreference
             android:defaultValue="@array/autodownload_cellular_defaults"
             android:entries="@array/autodownload"
             android:entryValues="@array/autodownload_values"
             android:key="@string/key_autodownload_cellular"
             android:title="@string/mobile_data_title" />
 
-        <net.trejj.rubytalksense.activities.settings.SettingsMultiSelectPreference
+        <net.trejj.talk.activities.settings.SettingsMultiSelectPreference
             android:defaultValue="@array/autodownload_roaming_defaults"
             android:entries="@array/autodownload"
             android:entryValues="@array/autodownload_values"
             android:key="@string/key_autodownload_roaming"
             android:title="@string/roaming_title" />
 
-        <net.trejj.rubytalksense.activities.settings.SettingsMultiSelectPreference
+        <net.trejj.talk.activities.settings.SettingsMultiSelectPreference
             android:defaultValue="@array/autodownload_wifi_defaults"
             android:entries="@array/autodownload"
             android:entryValues="@array/autodownload_values"
