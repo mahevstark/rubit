@@ -247,7 +247,7 @@
     <string name="status_uploaded">Status uploaded Successfully</string>
     <string name="error_uploading_status">Error uploading status</string>
     <string name="invite">Invite</string>
-    <string name="share_app_text">Download now %s App for Instant messaging,groups support,Video Calls, and more. </string>
+    <string name="share_app_text">Hi, I find this %s App rally amazing for international phone calls, Instant messaging, group chats, Video Calls, and more. Grab it now and let us  get talking </string>
     <string name="no_contacts">No %s Contacts</string>
     <string name="minutes_ago">minutes ago</string>
     <string name="hours_ago">hours ago</string>
@@ -457,9 +457,9 @@
     <string name="update_app">Please update the app to the latest version</string>
     <string name="update">UPDATE</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="phone_auth_info">You will receive 6 digits code to verify.\nStandards rate may apply</string>
+    <string name="phone_auth_info">You will receive a 6 digits code to verify.\nStandards rate may apply</string>
     <string name="verify">VERIFY</string>
-    <string name="enter_phone_confirmation_message">we will send you a SMS message to %s to verify your number</string>
+    <string name="enter_phone_confirmation_message">we will send you an SMS to %s to verify your number</string>
     <string name="enter_correct_number">Please enter a correct number</string>
     <string name="otp_verification">OTP Verification</string>
     <string name="enter_the_otp_sent_to">Enter the OTP sent to %s</string>
