@@ -20,8 +20,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import net.trejj.talk.Audio;
+import net.trejj.talk.CallRunningService;
 import net.trejj.talk.Function;
 import net.trejj.talk.R;
 import net.trejj.talk.activities.BaseActivity;
@@ -294,11 +296,21 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
             mCallDuration.setText(formatTimespan(call.getDetails().getDuration()));
         }
     }
+    public void startService() {
+        Intent serviceIntent = new Intent(this, CallRunningService.class);
+        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android");
+        ContextCompat.startForegroundService(this, serviceIntent);
+    }
+    public void stopService() {
+        Intent serviceIntent = new Intent(this, CallRunningService.class);
+        stopService(serviceIntent);
+    }
 
     private class SinchCallListener implements CallListener {
 
         @Override
         public void onCallEnded(Call call) {
+            stopService();
             CallEndCause cause = call.getDetails().getEndCause();
             Log.d(TAG, "Call ended. Reason: " + cause.toString());
             mAudioPlayer.stopProgressTone();
@@ -319,6 +331,8 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
 
         @Override
         public void onCallEstablished(Call call) {
+
+            startService();
             runTimer(call);
             //Toast.makeText(CallScreenActivity.this, "call attended", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Call established");

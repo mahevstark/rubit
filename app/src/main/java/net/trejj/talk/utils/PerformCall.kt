@@ -3,6 +3,7 @@ package net.trejj.talk.utils
 import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import net.trejj.talk.R
@@ -54,6 +55,8 @@ class PerformCall(var context: Activity, var fireManager: FireManager, var dispo
                             callScreen.putExtra(IntentUtils.CALL_ID, generateKey())
                             callScreen.putExtra(IntentUtils.CALL_ACTION_TYPE, IntentUtils.ACTION_START_NEW_CALL)
                             context.startActivity(callScreen)
+
+                            Log.i("uidddd",uid)
 
                         }
                     }) { throwable: Throwable? -> progressDialog.dismiss() })

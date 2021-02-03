@@ -8,18 +8,20 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import ca.barrenechea.widget.recyclerview.decoration.StickyHeaderAdapter
+import io.realm.OrderedRealmCollection
+import io.realm.RealmRecyclerViewAdapter
 import net.trejj.talk.R
 import net.trejj.talk.adapters.messaging.holders.*
 import net.trejj.talk.adapters.messaging.holders.base.BaseHolder
 import net.trejj.talk.adapters.messaging.holders.base.ReceivedDeletedMessageHolder
 import net.trejj.talk.model.AudibleState
 import net.trejj.talk.model.constants.MessageType
+import net.trejj.talk.model.realms.FireCall
 import net.trejj.talk.model.realms.Message
 import net.trejj.talk.model.realms.User
 import net.trejj.talk.utils.TimeHelper
-import io.realm.OrderedRealmCollection
-import io.realm.RealmRecyclerViewAdapter
 import java.util.*
+import kotlin.collections.indices as indices
 
 /**
  * Created by Devlomi on 07/08/2017.
@@ -29,7 +31,7 @@ import java.util.*
 class MessagingAdapter(private val messages: OrderedRealmCollection<Message>, autoUpdate: Boolean,
                        private val context: Context, private val lifecycleOwner: LifecycleOwner, var user: User, private val myThumbImg: String,
                        private val selectedItems: LiveData<List<Message>>,
-                       private val progressMap: LiveData<Map<String, Int>>, private val audibleState: LiveData<Map<String, AudibleState>>)
+                       private val progressMap: LiveData<Map<String, Int>>, private val audibleState: LiveData<Map<String, AudibleState>>, val fireCall: List<FireCall>)
 
     : RealmRecyclerViewAdapter<Message, RecyclerView.ViewHolder>(messages, autoUpdate)
         , StickyHeaderAdapter<RecyclerView.ViewHolder> {
@@ -87,8 +89,14 @@ class MessagingAdapter(private val messages: OrderedRealmCollection<Message>, au
         //get itemView type
         val type = getItemViewType(position)
         val message = messages[position]
-
-
+//        for (i in fireCall.indices) {
+//            val user: User = fireCall.get(i).user
+//
+//            if(user.uid.equals(message.chatPartnerId)){
+////                type =
+//            }
+//
+//        }
 
         when (type) {
             MessageType.SENT_TEXT -> {

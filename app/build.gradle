@@ -37,7 +37,7 @@ android {
         resValue 'integer', "max_group_call_count", "11"
 
         //Maps & Places
-        resValue 'string', "maps_api_key", ""
+        resValue 'string', "maps_api_key", "AIzaSyC2mXAWwU92I4p-7y0ZGk2W21qj2F9pRiw"
         resValue 'string', "foursquare_client_id", ""
         resValue 'string', "foursquare_client_secret", ""
 
@@ -103,7 +103,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.3.2'
     implementation 'com.google.firebase:firebase-database:19.3.1'
     implementation 'com.google.firebase:firebase-storage:19.1.1'
-    implementation 'com.google.firebase:firebase-ads:19.3.0'
+//    implementation 'com.google.firebase:firebase-ads:19.3.0'
     implementation 'com.google.firebase:firebase-functions:19.0.2'
 
     implementation 'com.hbb20:ccp:2.4.0'

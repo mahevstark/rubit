@@ -30,7 +30,7 @@ import net.trejj.talk.utils.*
 import net.trejj.talk.utils.GroupTyping.GroupTypingListener
 import net.trejj.talk.utils.network.FireManager
 import net.trejj.talk.utils.network.GroupManager
-import com.google.android.gms.ads.AdView
+//import com.google.android.gms.ads.AdView
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -50,7 +50,7 @@ class FragmentChats : BaseFragment(), GroupTypingListener, ActionMode.Callback, 
     var lastMessageStatListener: ValueEventListener? = null
     var groupTypingList: MutableList<GroupTyping>? = null
     var fireListener: FireListener? = null
-    override var adView: AdView? = null
+//    override var adView: AdView? = null
     private var callback: FragmentCallback? = null
     private var actionMenu: Menu? = null
 
@@ -140,7 +140,7 @@ class FragmentChats : BaseFragment(), GroupTypingListener, ActionMode.Callback, 
         listenForVoiceMessageStat()
         listenForLastMessageStat()
         listenForMessagesChanges()
-        adViewInitialized(adView)
+//        adViewInitialized(adView)
 
         mainViewModel.queryTextChange.observe(viewLifecycleOwner, androidx.lifecycle.Observer { text ->
             onQueryTextChange(text)
@@ -154,7 +154,7 @@ class FragmentChats : BaseFragment(), GroupTypingListener, ActionMode.Callback, 
 
     private fun init(view: View) {
         rvChats = view.findViewById(R.id.rv_chats)
-        adView = view.findViewById(R.id.ad_view)
+//        adView = view.findViewById(R.id.ad_view)
     }
 
     //add a listener for the last message if the user has replied from the notification

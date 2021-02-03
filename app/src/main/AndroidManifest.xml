@@ -4,6 +4,13 @@
     package="net.trejj.talk">
 
     <!-- PERMISSIONS -->
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.WRITE_SECURE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -21,6 +28,7 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
     <uses-feature
         android:name="android.hardware.location.network"
@@ -39,21 +47,19 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:replace="android:supportsRtl,android:allowBackup">
-
+        <service
+            android:name=".CallRunningService"
+            android:enabled="true"
+            android:exported="true"></service>
 
         <uses-library
             android:name="org.apache.http.legacy"
-            android:required="false" />
-
-        <!-- ACTIVITIES -->
-
-
+            android:required="false" /> <!-- ACTIVITIES -->
         <activity
             android:name=".activities.LockscreenActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/FullscreenTheme" />
-
         <activity
             android:name=".activities.authentication.AuthenticationActivity"
             android:exported="true"
@@ -222,13 +228,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="net.trejj.talk.activities.main.MainActivity" />
         </activity>
-
         <activity
             android:name=".activities.calling.CallingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
-
         <activity
             android:name=".activities.NewCallActivity"
             android:screenOrientation="portrait" />
@@ -256,13 +259,10 @@
             android:name=".placespicker.PlacesPickerActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity
             android:name=".extensions.ExitAndRemoveFromRecentAppsDummyActivity"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoDisplay" />
-
-        <!-- SERVICES -->
+            android:theme="@android:style/Theme.NoDisplay" /> <!-- SERVICES -->
         <service
             android:name=".job.NetworkJobService"
             android:permission="android.permission.BIND_JOB_SERVICE" />
@@ -303,10 +303,10 @@
         <service
             android:name=".services.CallingService"
             android:exported="false" />
-
         <service
             android:name=".services.SinchService"
             android:exported="false" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -334,13 +334,24 @@
             android:name=".activities.BackupChatActivity"
             android:label="@string/title_activity_backup_chat"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <meta-data
             android:name="co.paystack.android.PublicKey"
-            android:value="pk_your_public_key"/>
+            android:value="pk_your_public_key" />
 
         <activity android:name=".activities.CallScreenActivity" />
         <activity android:name=".activities.ChargePaystack" />
         <activity android:name=".activities.EarnCreditsActivity" />
+
+        <provider
+            android:name=".GenericFileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths" />
+        </provider>
     </application>
 
 </manifest>

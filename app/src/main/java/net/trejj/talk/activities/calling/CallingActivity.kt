@@ -26,6 +26,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import io.agora.rtc.Constants.CONNECTION_STATE_CONNECTED
+import io.agora.rtc.RtcEngine
+import io.agora.rtc.video.VideoCanvas
+import io.reactivex.rxkotlin.addTo
+import kotlinx.android.synthetic.main.activity_phone_call.*
+import net.trejj.talk.CallRunningService
 import net.trejj.talk.R
 import net.trejj.talk.activities.BaseActivity
 import net.trejj.talk.activities.calling.event.CallingStateEvent
@@ -48,12 +55,6 @@ import net.trejj.talk.utils.network.FireManager
 import net.trejj.talk.utils.network.FireManager.Companion.checkAndDownloadUserPhoto
 import net.trejj.talk.utils.network.FireManager.Companion.fetchUserByUid
 import net.trejj.talk.utils.network.GroupManager
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import io.agora.rtc.Constants.CONNECTION_STATE_CONNECTED
-import io.agora.rtc.RtcEngine
-import io.agora.rtc.video.VideoCanvas
-import io.reactivex.rxkotlin.addTo
-import kotlinx.android.synthetic.main.activity_phone_call.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -338,14 +339,33 @@ class CallingActivity : BaseActivity(), ServiceConnection {
                 tvStatus.text = getString(R.string.reconnecting)
             }
             CallingState.ANSWERED -> {
+                startService()
                 tvStatus.text = getString(R.string.answered)
             }
             else -> {
+                if(isStarted){
+                    stopService()
+                }
                 tvStatus.text = ""
             }
 
 
         }
+    }
+
+    var isStarted : Boolean = false
+
+    fun startService() {
+        isStarted = true
+        val serviceIntent = Intent(this, CallRunningService::class.java)
+        serviceIntent.putExtra("inputExtra", "Foreground Service Example in Android")
+        ContextCompat.startForegroundService(this, serviceIntent)
+    }
+
+    fun stopService() {
+        isStarted = false
+        val serviceIntent = Intent(this, CallRunningService::class.java)
+        stopService(serviceIntent)
     }
 
     private fun hideOrShowTopBottomHolders(setHidden: Boolean) {

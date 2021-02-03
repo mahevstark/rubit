@@ -32,6 +32,7 @@ import android.view.ViewTreeObserver;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.MimeTypeMap;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -48,6 +49,7 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.app.SharedElementCallback;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.core.view.ViewCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -141,9 +143,9 @@ import com.devlomi.record_view.OnRecordClickListener;
 import com.devlomi.record_view.OnRecordListener;
 import com.devlomi.record_view.RecordView;
 import com.droidninja.imageeditengine.ImageEditor;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.InterstitialAd;
+//import com.google.android.gms.ads.AdListener;
+//import com.google.android.gms.ads.AdRequest;
+//import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
@@ -181,6 +183,8 @@ import omrecorder.OmRecorder;
 import omrecorder.PullTransport;
 import omrecorder.Recorder;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static net.trejj.talk.model.constants.DownloadUploadStat.CANCELLED;
 import static net.trejj.talk.model.constants.DownloadUploadStat.FAILED;
 import static net.trejj.talk.model.constants.DownloadUploadStat.LOADING;
@@ -839,7 +843,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
 
         if (getResources().getBoolean(R.bool.is_interstitial_ad_enabled))
-            loadInterstitialAd();
+//            loadInterstitialAd();
 
 
         btnCancelImage.setOnClickListener(new View.OnClickListener() {
@@ -957,18 +961,18 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         return isGroup && user.getGroup() != null && user.getGroup().getUsers() != null;
     }
 
-    private void loadInterstitialAd() {
-        final InterstitialAd interstitialAd = new InterstitialAd(this);
-        interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_id));
-        interstitialAd.loadAd(new AdRequest.Builder().build());
-        interstitialAd.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                interstitialAd.show();
-            }
-        });
-    }
+//    private void loadInterstitialAd() {
+//        final InterstitialAd interstitialAd = new InterstitialAd(this);
+//        interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_id));
+//        interstitialAd.loadAd(new AdRequest.Builder().build());
+//        interstitialAd.setAdListener(new AdListener() {
+//            @Override
+//            public void onAdLoaded() {
+//                super.onAdLoaded();
+//                interstitialAd.show();
+//            }
+//        });
+//    }
 
     @Override
     protected void onResume() {
@@ -1551,7 +1555,8 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
         adapter = new MessagingAdapter(messageList, true, this, this,
                 user, SharedPreferencesManager.getThumbImg(),
-                viewModel.getItemSelectedLiveData(), viewModel.getProgressMapLiveData(), viewModel.getAudibleState());
+                viewModel.getItemSelectedLiveData(), viewModel.getProgressMapLiveData(),
+                viewModel.getAudibleState(),RealmHelper.getInstance().getAllCalls());
 
 
         decor = new StickyHeaderDecoration(adapter);
@@ -2084,7 +2089,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         if (message.getLocalPath() == null) return;
         Intent shareImageIntent = IntentUtils.getShareImageIntent(message.getLocalPath());
         shareImageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        shareImageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        shareImageIntent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(shareImageIntent);
     }
 
@@ -2730,6 +2735,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
     public void onFileClick(Message message) {
         try {
+
             startActivity(IntentUtils.getOpenFileIntent(this, message.getLocalPath()));
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, R.string.cannot_open_this_file, Toast.LENGTH_SHORT).show();
@@ -2817,7 +2823,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         Intent intent = new Intent(ChatActivity.this, ChatActivity.class);
         intent.putExtra(IntentUtils.UID, user.getUid());
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 

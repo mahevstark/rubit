@@ -41,8 +41,10 @@ class CallsManager {
     //this will reject/decline/hangup a call
     fun setCallEnded(callId: String, otherUid: String, isIncoming: Boolean): Completable {
         return if (isIncoming) {
+            FireConstants.messages.child(FireManager.uid).child(otherUid).child(callId).child("ended_incoming").setValueRx(true)
             FireConstants.newCallsRef.child(FireManager.uid).child(otherUid).child(callId).child("ended_incoming").setValueRx(true)
         } else {
+            FireConstants.messages.child(otherUid).child(FireManager.uid).child(callId).child("ended_outgoing").setValueRx(true)
             FireConstants.newCallsRef.child(otherUid).child(FireManager.uid).child(callId).child("ended_outgoing").setValueRx(true)
         }
     }

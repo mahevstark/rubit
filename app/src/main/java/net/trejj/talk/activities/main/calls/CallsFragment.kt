@@ -18,14 +18,14 @@ import net.trejj.talk.utils.PerformCall
 import net.trejj.talk.utils.RealmHelper
 import net.trejj.talk.utils.network.FireManager
 import com.devlomi.hidely.hidelyviews.HidelyImageView
-import com.google.android.gms.ads.AdView
+//import com.google.android.gms.ads.AdView
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_calls.*
 import java.util.*
 
 class CallsFragment : BaseFragment(), ActionMode.Callback, CallsAdapter.OnClickListener {
 
-    override var adView: AdView? = null
+//    override var adView: AdView? = null
     private var fireCallList: RealmResults<FireCall>? = null
     private val selectedFireCallListActionMode: MutableList<FireCall> = ArrayList()
     private lateinit var adapter: CallsAdapter
@@ -56,8 +56,8 @@ class CallsFragment : BaseFragment(), ActionMode.Callback, CallsAdapter.OnClickL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adView = view.findViewById(R.id.ad_view)
-        adViewInitialized(adView)
+//        adView = view.findViewById(R.id.ad_view)
+//        adViewInitialized(adView)
         initAdapter()
 
         viewModel.queryTextChange.observe(viewLifecycleOwner, androidx.lifecycle.Observer { newText ->

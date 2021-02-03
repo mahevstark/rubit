@@ -1,5 +1,6 @@
 package net.trejj.talk.services;
 
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
@@ -7,6 +8,8 @@ import android.media.AudioManager;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
+
+import androidx.core.content.ContextCompat;
 
 import com.sinch.android.rtc.AudioController;
 import com.sinch.android.rtc.ClientRegistration;
@@ -25,6 +28,7 @@ import com.sinch.android.rtc.video.VideoCallListener;
 import com.sinch.android.rtc.video.VideoController;
 import com.sinch.android.rtc.video.VideoScalingType;
 
+import net.trejj.talk.CallRunningService;
 import net.trejj.talk.model.realms.FireCall;
 import net.trejj.talk.model.realms.User;
 import net.trejj.talk.utils.AudioHelper;
@@ -224,6 +228,7 @@ public class SinchService extends Service implements VideoCallListener, Proximit
     public void onCallEstablished(Call call) {
         if (ringtonePlayer != null)
             ringtonePlayer.stopRingtone();
+
 
 
         //divert sound to bluetooh headset if available

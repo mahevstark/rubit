@@ -92,6 +92,7 @@ public class CallsAdapter extends RealmRecyclerViewAdapter<FireCall, CallsAdapte
         public void bind(final FireCall fireCall) {
             User user = fireCall.getUser();
 
+
             if (user != null) {
 
                 if(user.getProperUserName()!=null){
