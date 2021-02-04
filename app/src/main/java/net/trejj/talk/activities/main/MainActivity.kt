@@ -3,7 +3,9 @@ package net.trejj.talk.activities.main
 import android.Manifest
 import android.animation.Animator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
@@ -589,6 +591,11 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
 //                    callScreen.putExtra(CallingService.callId, callId)
                     callScreen.putExtra("number", number)
                     callScreen.putExtra("callername", callername)
+                    val preferences: SharedPreferences = this.getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE)
+                    val editor: SharedPreferences.Editor = preferences.edit()
+                    editor.putString("number",number)
+                    editor.putString("callername",callername)
+                    editor.apply()
                     startActivity(callScreen)
                 } else {
 

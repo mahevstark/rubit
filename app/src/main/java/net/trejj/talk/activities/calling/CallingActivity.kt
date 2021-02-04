@@ -25,6 +25,7 @@ import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
+import androidx.transition.Visibility
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.agora.rtc.Constants.CONNECTION_STATE_CONNECTED
@@ -32,6 +33,7 @@ import io.agora.rtc.RtcEngine
 import io.agora.rtc.video.VideoCanvas
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_phone_call.*
+import kotlinx.android.synthetic.main.row_call.view.*
 import net.trejj.talk.CallRunningService
 import net.trejj.talk.R
 import net.trejj.talk.activities.BaseActivity
@@ -40,6 +42,7 @@ import net.trejj.talk.activities.calling.event.CallingViewState
 import net.trejj.talk.activities.calling.model.CallType
 import net.trejj.talk.activities.calling.model.CallingState
 import net.trejj.talk.activities.calling.model.EngineConfig
+import net.trejj.talk.activities.main.messaging.ChatActivity.callInProgress
 import net.trejj.talk.common.extensions.unBindServiceSafely
 import net.trejj.talk.extensions.finishAndRemoveTaskCompat
 import net.trejj.talk.model.ImageItem
@@ -75,6 +78,7 @@ class CallingActivity : BaseActivity(), ServiceConnection {
     private lateinit var btnFlipCamera: ImageButton
     private lateinit var bottomHolder: ImageView
     lateinit var localViewGroup: FrameLayout
+    lateinit var localViewGroup2: FrameLayout
 
     private var dx = 0f
     private var dy = 0f
@@ -121,55 +125,74 @@ class CallingActivity : BaseActivity(), ServiceConnection {
         action = intent.getIntExtra(IntentUtils.CALL_ACTION_TYPE, IntentUtils.NOTIFICATION_ACTION_NONE)
 
 
+        val preferences : SharedPreferences = getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE)
+        val editor : SharedPreferences.Editor = preferences.edit()
 
+        tvUsername.text = preferences.getString("name","")
+        Glide.with(this).load(preferences.getString("photo", "https://firebasestorage.googleapis.com/v0/b/ruby-talk-sense.appspot.com/o/default_user_img.png?alt=media&token=16878a98-24a3-4a62-8c76-75e94650b798")).into(imgUser)
 
-        tvCallType.text = getCallTypeText()
-        user = RealmHelper.getInstance().getUser(uid)
-        if (user != null) {
-            user?.let { user ->
-                tvUsername.text = user.properUserName
-                tvStatus.setText(R.string.connecting)
-                //load the full user image if it's exists
-                if (user.userLocalPhoto != null) {
-                    Glide.with(this).load(user.userLocalPhoto).into(imgUser)
-                    //otherwise load the thumbImg
-                } else {
-                    Glide.with(this).load(user.thumbImg).into(imgUser)
+        val isCallInProgress : Boolean = preferences.getBoolean("isCallInProgress",false)
+        val isVideo : Boolean = preferences.getBoolean("isVideo",false)
+
+        if(!isCallInProgress || isVideo) {
+            tvCallType.text = getCallTypeText()
+            user = RealmHelper.getInstance().getUser(uid)
+
+            if (user != null) {
+                user?.let { user ->
+                    tvUsername.text = user.properUserName
+                    tvStatus.setText(R.string.connecting)
+                    editor.putString("name", user.properUserName)
+                    //load the full user image if it's exists
+                    if (user.userLocalPhoto != null) {
+                        Glide.with(this).load(user.userLocalPhoto).into(imgUser)
+                        editor.putString("photo", user.userLocalPhoto)
+                        //otherwise load the thumbImg
+                    } else {
+                        editor.putString("photo", user.thumbImg)
+                        Glide.with(this).load(user.thumbImg).into(imgUser)
+                    }
+                    editor.apply()
                 }
-            }
-        } else {
-            //if the user is not exists in local database we will set the name as phoneNumber
-            if (phoneNumber != null)
-                tvUsername.text = phoneNumber
+            } else {
+                //if the user is not exists in local database we will set the name as phoneNumber
+                if (phoneNumber != null)
+                    tvUsername.text = phoneNumber
+                editor.putString("name", phoneNumber)
+                //fetch the user info and save it
+                uid?.let { uid ->
 
-            //fetch the user info and save it
-            uid?.let { uid ->
+                    if (callType.isGroupCall()) {
+                        groupManager.fetchAndCreateGroup(uid).subscribe({ user ->
+                            if (user != null) {
+                                RealmHelper.getInstance().updateUserObjectForCall(uid, mCallId)
+                                tvUsername.text = user.properUserName
+                                editor.putString("name", user.properUserName)
+                            }
+                        }, { error ->
 
-                if (callType.isGroupCall()) {
-                    groupManager.fetchAndCreateGroup(uid).subscribe({ user ->
-                        if (user != null) {
-                            RealmHelper.getInstance().updateUserObjectForCall(uid, mCallId)
-                            tvUsername.text = user.properUserName
-                        }
-                    }, { error ->
+                        }).addTo(disposables)
 
-                    }).addTo(disposables)
+                    } else {
+                        fetchUserByUid(uid)
+                                .subscribe({ user ->
+                                    if (user != null) {
+                                        RealmHelper.getInstance().updateUserObjectForCall(uid, mCallId)
+                                        tvUsername.text = user.properUserName
+                                        editor.putString("name", user.properUserName)
+                                    }
+                                }, { throwable ->
 
-                } else {
-                    fetchUserByUid(uid)
-                            .subscribe({ user ->
-                                if (user != null) {
-                                    RealmHelper.getInstance().updateUserObjectForCall(uid, mCallId)
-                                    tvUsername.text = user.properUserName
-                                }
-                            }, { throwable ->
+                                }).addTo(disposables)
+                    }
 
-                            }).addTo(disposables)
                 }
-
             }
         }
 
+        if(isVideo){
+            resumeLocalVideo()
+        }
         hideOrShowButtons(callDirection == FireCallDirection.OUTGOING)
         btnAnswer.setOnClickListener { setStateEvent(CallingStateEvent.AnswerIncoming) }
         btnReject.setOnClickListener { setStateEvent(CallingStateEvent.RejectIncoming) }
@@ -209,10 +232,15 @@ class CallingActivity : BaseActivity(), ServiceConnection {
 
         calculateViewsSizes()
 
-
-        localViewGroup.setOnTouchListener { view, event ->
-            handleLvgTouchEvent(event, view)
+        localViewGroup.setOnClickListener {
+            localViewGroup.visibility = View.GONE
+            localViewGroup.removeAllViews()
+            localViewGroup2.visibility = View.VISIBLE
         }
+
+//        localViewGroup.setOnTouchListener { view, event ->
+//            handleLvgTouchEvent(event, view)
+//        }
 
         broadcastReceiver = object : BroadcastReceiver() {
             override fun onReceive(p0: Context?, p1: Intent?) {
@@ -228,6 +256,11 @@ class CallingActivity : BaseActivity(), ServiceConnection {
         constraint.doOnPreDraw {
             rootWidth = it.width
             rootHeight = it.height
+        }
+
+        localViewGroup2.doOnPreDraw {
+            localViewGroupWidth = it.width
+            localViewGroupHeight = it.height
         }
         localViewGroup.doOnPreDraw {
             localViewGroupWidth = it.width
@@ -320,11 +353,15 @@ class CallingActivity : BaseActivity(), ServiceConnection {
 
     private fun setCallingState(callingState: CallingState) {
 
-
         when (callingState) {
             CallingState.INITIATING -> {
                 hideOrShowButtons(true)
                 tvStatus.text = getString(R.string.initiating)
+                val sharedPreferences: SharedPreferences = this.getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE)
+                val editor : SharedPreferences.Editor = sharedPreferences.edit()
+                editor.putBoolean("isCallInProgress",true)
+                editor.apply()
+                callInProgress.visibility = View.VISIBLE
             }
             CallingState.CONNECTING -> {
                 tvStatus.text = getString(R.string.connecting)
@@ -339,13 +376,13 @@ class CallingActivity : BaseActivity(), ServiceConnection {
                 tvStatus.text = getString(R.string.reconnecting)
             }
             CallingState.ANSWERED -> {
-                startService()
+//                startService()
                 tvStatus.text = getString(R.string.answered)
             }
             else -> {
-                if(isStarted){
-                    stopService()
-                }
+//                if(isStarted){
+//                    stopService()
+//                }
                 tvStatus.text = ""
             }
 
@@ -549,6 +586,21 @@ class CallingActivity : BaseActivity(), ServiceConnection {
 
 
     private fun endCall() {
+
+        val sharedPreferences: SharedPreferences = this.getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE)
+        val editor : SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putBoolean("isCallInProgress",false)
+        editor.putString(IntentUtils.UID,"")
+        editor.putString(IntentUtils.CALL_ID,"")
+        editor.putInt(IntentUtils.CALL_TYPE, 0)
+        editor.putInt(IntentUtils.CALL_DIRECTION, 0)
+        editor.putBoolean("isVideo",false)
+        editor.apply()
+
+        callInProgress.visibility = View.GONE
+//        if(isStarted){
+//            stopService()
+//        }
         volumeControlStream = AudioManager.STREAM_SYSTEM
         preview(false, null, config()?.mUid ?: 0)
         finishAndRemoveTaskCompat()
@@ -569,6 +621,7 @@ class CallingActivity : BaseActivity(), ServiceConnection {
         btnFlipCamera = findViewById(R.id.btn_flip_camera)
         bottomHolder = findViewById(R.id.bottom_holder)
         localViewGroup = findViewById(R.id.local_view)
+        localViewGroup2 = findViewById(R.id.local_view2)
     }
 
 
@@ -773,6 +826,7 @@ class CallingActivity : BaseActivity(), ServiceConnection {
         super.onDestroy()
     }
 
+    lateinit var surfaceView : SurfaceView
 
     private fun renderRemoteVideo(uid: Int) {
 
@@ -793,12 +847,15 @@ class CallingActivity : BaseActivity(), ServiceConnection {
         setStateEvent(CallingStateEvent.SurfaceViewAddedForUid(uid, surfaceV))
         videoUids[uid] = Pair(surfaceV, false)
 
+        surfaceView = surfaceV
+
         addRemoteView(uid, surfaceV)
         remote_view.isVisible = true
 
     }
     private fun addRemoteView(uid: Int, surfaceV: SurfaceView) {
         remote_view.addItem(uid, surfaceV)
+        localViewGroup2.addView(surfaceV)
         btnVideo.visibility = View.VISIBLE
         btnFlipCamera.visibility = View.VISIBLE
     }

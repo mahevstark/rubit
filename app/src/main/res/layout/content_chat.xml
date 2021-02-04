@@ -11,6 +11,19 @@
     app:behavior_peekHeight="100dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <TextView
+        android:id="@+id/callInProgress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        android:text="Tap to return to call"
+        android:padding="10dp"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        anim:layout_constraintEnd_toEndOf="parent"
+        anim:layout_constraintStart_toStartOf="parent"
+        anim:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_cant_send_messages"
@@ -45,7 +58,7 @@
         anim:layout_constraintBottom_toTopOf="@id/quoted_message_frame"
         anim:layout_constraintLeft_toLeftOf="parent"
         anim:layout_constraintRight_toRightOf="parent"
-        anim:layout_constraintTop_toTopOf="parent" />
+        anim:layout_constraintTop_toBottomOf="@+id/callInProgress" />
 
 
     <com.devlomi.hidely.hidelyviews.HidelyImageButton

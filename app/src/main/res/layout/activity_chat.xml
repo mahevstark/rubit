@@ -167,14 +167,12 @@
                     app:layout_constraintTop_toBottomOf="@id/user_name_toolbar_chat_activity"
                     tools:text="2Minutes Ago" />
 
-
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         </androidx.appcompat.widget.Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
-
 
     <include layout="@layout/content_chat" />
 

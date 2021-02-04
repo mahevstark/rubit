@@ -9,6 +9,7 @@ import android.content.ContextWrapper;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.view.View;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.RemoteInput;
@@ -40,6 +41,7 @@ import java.util.List;
 import io.realm.RealmList;
 import me.leolin.shortcutbadger.ShortcutBadger;
 
+import static net.trejj.talk.activities.main.messaging.ChatActivity.callInProgress;
 import static net.trejj.talk.utils.IntentUtils.NOTIFICATION_ACTION_DECLINE;
 import static net.trejj.talk.utils.MessageTypeHelper.getMessageContent;
 

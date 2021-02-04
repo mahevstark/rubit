@@ -6,9 +6,11 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -68,6 +70,7 @@ import net.trejj.talk.activities.FullscreenActivity;
 import net.trejj.talk.activities.SelectContactNumbersActivity;
 import net.trejj.talk.activities.UserDetailsActivity;
 import net.trejj.talk.activities.ViewStatusActivity;
+import net.trejj.talk.activities.calling.CallingActivity;
 import net.trejj.talk.activities.main.messaging.ChatViewModel;
 import net.trejj.talk.activities.main.messaging.swipe.MessageSwipeController;
 import net.trejj.talk.activities.main.messaging.swipe.SwipeControllerActions;
@@ -84,6 +87,7 @@ import net.trejj.talk.events.UpdateNetworkProgress;
 import net.trejj.talk.model.ExpandableContact;
 import net.trejj.talk.model.ProgressData;
 import net.trejj.talk.model.constants.DownloadUploadStat;
+import net.trejj.talk.model.constants.FireCallDirection;
 import net.trejj.talk.model.constants.MessageStat;
 import net.trejj.talk.model.constants.MessageType;
 import net.trejj.talk.model.constants.TypingStat;
@@ -208,6 +212,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
     public static int MAX_FILE_SIZE = 40000;
     public static final int MAX_SELECTABLE = 9;
 
+    public static TextView callInProgress;
 
     //update last seen every 120000 Seconds (2 Minutes)
     private static final int UPDATE_PRESENCE_DELAY = 120000;
@@ -370,6 +375,33 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        callInProgress = findViewById(R.id.callInProgress);
+
+        SharedPreferences preferences = getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE);
+        boolean isCallInProgress = preferences.getBoolean("isCallInProgress",false);
+        if(isCallInProgress){
+            callInProgress.setVisibility(View.VISIBLE);
+        }else {
+            callInProgress.setVisibility(View.GONE);
+        }
+
+
+        callInProgress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String uid = preferences.getString(IntentUtils.UID,"");
+                String callId = preferences.getString(IntentUtils.CALL_ID,"");
+                int callType = preferences.getInt(IntentUtils.CALL_TYPE, 0);
+                int callDirection = preferences.getInt(IntentUtils.CALL_DIRECTION, 0);
+
+                startActivity(new Intent(ChatActivity.this, CallingActivity.class)
+                .putExtra(IntentUtils.CALL_TYPE, callType)
+                .putExtra(IntentUtils.CALL_DIRECTION, callDirection)
+                .putExtra(IntentUtils.UID, uid)
+                .putExtra(IntentUtils.CALL_ID, callId)
+                .putExtra(IntentUtils.CALL_ACTION_TYPE, 5));
+            }
+        });
 
         init();
         setBackgroundImage();

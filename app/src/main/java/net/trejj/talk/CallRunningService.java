@@ -12,6 +12,7 @@ import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
@@ -19,6 +20,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import net.trejj.talk.activities.CallScreenActivity;
 import net.trejj.talk.activities.main.MainActivity;
 
 public class CallRunningService extends Service {
@@ -32,7 +34,12 @@ public class CallRunningService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
 //        String input = intent.getStringExtra("inputExtra");
         createNotificationChannel();
-        Intent notificationIntent = new Intent(this, MainActivity.class);
+        SharedPreferences preferences = this.getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE);
+        String number = preferences.getString("number","");
+        String callername = preferences.getString("callername","");
+        Intent notificationIntent = new Intent(this, CallScreenActivity.class)
+                .putExtra("callername",callername).putExtra("number",number)
+                .putExtra("isCallInProgress",true);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)

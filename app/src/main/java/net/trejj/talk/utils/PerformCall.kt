@@ -2,10 +2,13 @@ package net.trejj.talk.utils
 
 import android.app.Activity
 import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.google.android.gms.dynamite.descriptors.com.google.android.gms.measurement.dynamite.ModuleDescriptor
 import net.trejj.talk.R
 import net.trejj.talk.activities.calling.CallingActivity
 import net.trejj.talk.activities.calling.model.CallType
@@ -49,15 +52,24 @@ class PerformCall(var context: Activity, var fireManager: FireManager, var dispo
                         } else {
                             val callType = if (isVideo) CallType.VIDEO else CallType.VOICE
                             val callScreen = Intent(context, CallingActivity::class.java)
+                            val key : String = generateKey()
                             callScreen.putExtra(IntentUtils.CALL_TYPE, callType.value)
                             callScreen.putExtra(IntentUtils.CALL_DIRECTION, FireCallDirection.OUTGOING)
                             callScreen.putExtra(IntentUtils.UID, uid)
-                            callScreen.putExtra(IntentUtils.CALL_ID, generateKey())
+                            callScreen.putExtra(IntentUtils.CALL_ID, key)
                             callScreen.putExtra(IntentUtils.CALL_ACTION_TYPE, IntentUtils.ACTION_START_NEW_CALL)
                             context.startActivity(callScreen)
 
-                            Log.i("uidddd",uid)
+                            val preferences : SharedPreferences = context.getSharedPreferences("net.trejj.talk",Context.MODE_PRIVATE)
+                            val editor : SharedPreferences.Editor = preferences.edit()
+                            editor.putString(IntentUtils.UID,uid)
+                            editor.putString(IntentUtils.CALL_ID,key)
+                            editor.putInt(IntentUtils.CALL_TYPE, callType.value)
+                            editor.putInt(IntentUtils.CALL_DIRECTION, FireCallDirection.OUTGOING)
+                            editor.putBoolean("isVideo",isVideo)
+                            editor.apply()
 
+                            Log.i("uidddd",uid)
                         }
                     }) { throwable: Throwable? -> progressDialog.dismiss() })
                 }
@@ -88,12 +100,26 @@ class PerformCall(var context: Activity, var fireManager: FireManager, var dispo
                 .setPositiveButton(R.string.yes) { dialogInterface, i2 ->
                     val callType = if (isVideo) CallType.CONFERENCE_VIDEO else CallType.CONFERENCE_VOICE
                     val callScreen = Intent(context, CallingActivity::class.java)
+                    val key : String = generateKey()
                     callScreen.putExtra(IntentUtils.CALL_TYPE, callType.value)
                     callScreen.putExtra(IntentUtils.CALL_DIRECTION, FireCallDirection.OUTGOING)
                     callScreen.putExtra(IntentUtils.UID, groupId)
-                    callScreen.putExtra(IntentUtils.CALL_ID, generateKey())
+                    callScreen.putExtra(IntentUtils.CALL_ID, key)
                     callScreen.putExtra(IntentUtils.CALL_ACTION_TYPE, IntentUtils.ACTION_START_NEW_CALL)
+
+                    val preferences : SharedPreferences = context.getSharedPreferences("net.trejj.talk",Context.MODE_PRIVATE)
+                    val editor : SharedPreferences.Editor = preferences.edit()
+                    editor.putString(IntentUtils.UID,groupId)
+                    editor.putString(IntentUtils.CALL_ID,key)
+                    editor.putInt(IntentUtils.CALL_TYPE, callType.value)
+                    editor.putInt(IntentUtils.CALL_DIRECTION, FireCallDirection.OUTGOING)
+                    editor.putBoolean("isVideo",isVideo)
+                    editor.apply()
+
                     context.startActivity(callScreen)
+
+
+
                 }
         dialog.show()
     }

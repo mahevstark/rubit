@@ -3,6 +3,7 @@ package net.trejj.talk.activities;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -83,6 +84,8 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
     private Sensor mProximity;
     PowerManager.WakeLock wlOff = null, wlOn = null;
 
+    private boolean isCallInProgress = false;
+
     @SuppressLint("InvalidWakeLockTag")
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
@@ -139,25 +142,31 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
     @Override
     public void onSinchConnected() {
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
-                mCallId = call1.getCallId();
+        if(!isCallInProgress) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
+                    mCallId = call1.getCallId();
 
-                Call call = getSinchServiceInterface().getCall(mCallId);
-
-                if (call != null) {
-                    call.addCallListener(new SinchCallListener());
-                    //mCallerName.setText(call.getRemoteUserId());
-                    mCallerName.setText(callername);
-                    mCallState.setText(call.getState().toString());
-                } else {
-                    Log.e(TAG, "Started with invalid callId, aborting.");
-                    finish();
+                    Call call = getSinchServiceInterface().getCall(mCallId);
+                    if (call != null) {
+                        call.addCallListener(new SinchCallListener());
+                        //mCallerName.setText(call.getRemoteUserId());
+                        mCallerName.setText(callername);
+                        mCallState.setText(call.getState().toString());
+                    } else {
+                        Log.e(TAG, "Started with invalid callId, aborting.");
+                        finish();
+                    }
                 }
-            }
-        },3000);
+            }, 3000);
+        }else{
+            Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
+            mCallId = call1.getCallId();
+            endCall();
+            runTimer2(30);
+        }
 
     }
 
@@ -193,6 +202,13 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
         callerNumber = getIntent().getStringExtra("number");
         callername = getIntent().getStringExtra("callername");
 
+        if(getIntent().hasExtra("isCallInProgress")){
+            callerNumber = getIntent().getStringExtra("number");
+            callername = getIntent().getStringExtra("callername");
+            isCallInProgress = getIntent().getBooleanExtra("isCallInProgress",false);
+            mCallState.setText("Established");
+        }
+
         mCallerName.setText(callername);
         handler = new Handler();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -219,7 +235,8 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
 
         endCallButton.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View v)
+            {
                 endCall();
             }
         });
@@ -274,6 +291,12 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
     }
 
     private void endCall() {
+
+        SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("isCallInProgress",true);
+        editor.apply();
+
         mAudioPlayer.stopProgressTone();
         Call call = getSinchServiceInterface().getCall(mCallId);
         if (call != null) {
@@ -333,6 +356,7 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
         public void onCallEstablished(Call call) {
 
             startService();
+
             runTimer(call);
             //Toast.makeText(CallScreenActivity.this, "call attended", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Call established");
@@ -377,7 +401,32 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
 //        SaveCallHistory saveCallHistory = new SaveCallHistory();
 //        saveCallHistory.Save(callerNumber,endCause.toString(),System.currentTimeMillis(),duration,callAttended,callername,"phone_call","OUT");
 //    }
-
+private void runTimer2(int duration) {
+    if (previousPoints >= finalcost)
+    {
+        Double TotalPoints = previousPoints-=finalcost;
+        mDatabase.child("users").child(currentUser.getUid()).child("credits").setValue(TotalPoints);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (previousPoints >= finalcost){
+                    if (duration >= 60){
+                        Double TotalPoints = previousPoints-=finalcost;
+                        mDatabase.child("users").child(currentUser.getUid()).child("credits").setValue(TotalPoints);
+                    }
+                }else {
+                    stopTimer();
+                    endCall();
+                }
+                //Do something after 20 seconds
+                handler.postDelayed(this, 1000);
+            }
+        }, 1000);
+    }else {
+        stopTimer();
+        endCall();
+    }
+}
     private void runTimer(Call call) {
         if (previousPoints >= finalcost)
         {

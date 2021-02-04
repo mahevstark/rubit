@@ -12,7 +12,6 @@
         android:id="@+id/img_user"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -40,6 +39,13 @@
 
     <FrameLayout
         android:id="@+id/local_view"
+        android:layout_width="100dp"
+        android:layout_height="150dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+    <FrameLayout
+        android:id="@+id/local_view2"
         android:layout_width="100dp"
         android:layout_height="150dp"
         app:layout_constraintEnd_toEndOf="parent"
