@@ -420,8 +420,8 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                         .setfName("Buyer")
                         .setlName("Credits")
                         .setNarration("Buy credits for rubytalk")
-                        .setPublicKey("FLWPUBK_TEST-c0260844c956678dae10f493abfaa25f-X")
-                        .setEncryptionKey("FLWSECK_TEST0793f078135f")
+                        .setPublicKey("FLWPUBK-91dc7de22da7f34f10f562c1184b73e8-X")
+                        .setEncryptionKey("FLWSECK-9f7ddf5b716f604c840060d9ddfeb46e-X")
                         .setTxRef("eee"+new Random().nextInt(61) + 20)
 //                        .setPhoneNumber(phoneNumber, boolean)
                     .acceptAccountPayments(true)
@@ -445,7 +445,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
 //                        .isPreAuth(boolean)
 //                    .setSubAccounts(List<SubAccount>)
 //                        .shouldDisplayFee(boolean)
-                    .showStagingLabel(true)
+                    .showStagingLabel(false)
                     .initialize();
             }
 
