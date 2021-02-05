@@ -8,6 +8,11 @@ public class CreditsModel {
     private String title;
     private String price;
     private String price_usd;
+    private String desc;
+
+    public String getDesc() {
+        return desc;
+    }
 
     public String getId() {
         return id;
@@ -29,7 +34,8 @@ public class CreditsModel {
         return title;
     }
 
-    public CreditsModel(String id, String credits, String sku, String type, String title, String price, String price_usd) {
+    public CreditsModel(String id, String credits, String sku, String type, String title, String price,
+                        String price_usd, String desc) {
         this.id = id;
         this.credits = credits;
         this.sku = sku;
@@ -37,6 +43,7 @@ public class CreditsModel {
         this.title = title;
         this.price = price;
         this.price_usd = price_usd;
+        this.desc = desc;
     }
 
     public String getPrice_usd() {
