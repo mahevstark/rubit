@@ -381,27 +381,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                         initPurchaseFlow(productModel);
                         dialogInterface.dismiss();
                     }
-                }).setNeutralButton("Card", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                for(int i=0;i<creditsModel.size();i++){
-                    if(item.getSku().equals(creditsModel.get(i).getSku())){
-                        cred = creditsModel.get(i).getCredits();
-                        price = creditsModel.get(i).getPrice();
-                        title = creditsModel.get(i).getTitle();
-                        break;
-                    }
-                }
-                Intent intent = new Intent(EarnCreditsActivity.this, ChargePaystack.class);
-                intent.putExtra("points", String.valueOf(previousPoints));
-                intent.putExtra("credits",cred);
-                intent.putExtra("price",price);
-                intent.putExtra("title",title);
-//                startActivity(intent);
-                startActivityForResult(intent,111);
-            }
-
-        }).setNegativeButton("Flutterwave", new DialogInterface.OnClickListener() {
+                }).setNegativeButton("Flutterwave", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 for(int i=0;i<creditsModel.size();i++){
