@@ -72,6 +72,10 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
     public static String MEDIUM_PACK_ID= "";
     public static String BIG_PACK_ID = "";
 
+    public static String SMALL_PACK_DESC = "";
+    public static String MEDIUM_PACK_DESC = "";
+    public static String BIG_PACK_DESC = "";
+
     public static Integer SMALL_PACK_CREDITS = 0;
     public static Integer MEDIUM_PACK_CREDITS = 0;
     public static Integer BIG_PACK_CREDITS = 0;
@@ -245,7 +249,8 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                 for(DataSnapshot snapshot:dataSnapshot.getChildren()){
                     creditsModel.add(new CreditsModel(snapshot.getKey().toString(),snapshot.child("credits").getValue().toString(),
                             snapshot.child("sku").getValue().toString(),snapshot.child("type").getValue().toString(),
-                            snapshot.child("title").getValue().toString(), snapshot.child("price").getValue().toString(), snapshot.child("price_usd").toString()));
+                            snapshot.child("title").getValue().toString(), snapshot.child("price").getValue().toString(),
+                            snapshot.child("price_usd").toString(),snapshot.child("desc").getValue().toString()));
 
                 }
 
@@ -256,6 +261,10 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                 SMALL_PACK_CREDITS = Integer.parseInt(creditsModel.get(0).getCredits());
                 MEDIUM_PACK_CREDITS = Integer.parseInt(creditsModel.get(1).getCredits());
                 BIG_PACK_CREDITS = Integer.parseInt(creditsModel.get(2).getCredits());
+
+                SMALL_PACK_DESC = creditsModel.get(0).getDesc();
+                MEDIUM_PACK_DESC = creditsModel.get(1).getDesc();
+                BIG_PACK_DESC = creditsModel.get(2).getDesc();
 
                 sku_1_save.setText(creditsModel.get(3).getCredits());
                 sku_1_title.setText(creditsModel.get(3).getTitle());

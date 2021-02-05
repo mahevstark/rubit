@@ -23,8 +23,17 @@
             android:textSize="18dp"/>
 
         <TextView
-            android:id="@+id/price"
+            android:id="@+id/desc"
             android:layout_below="@id/name"
+            android:layout_width="wrap_content"
+            android:textColor="@color/colorPrimary"
+            android:layout_height="wrap_content"
+            android:text="@string/small_pack_sub_title"
+            android:textSize="13dp"/>
+
+        <TextView
+            android:id="@+id/price"
+            android:layout_below="@id/desc"
             android:layout_width="wrap_content"
             android:textColor="@color/green"
             android:layout_height="wrap_content"

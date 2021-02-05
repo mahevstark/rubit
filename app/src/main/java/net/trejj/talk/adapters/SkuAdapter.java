@@ -15,10 +15,13 @@ import net.trejj.talk.R;
 import java.util.List;
 
 import static net.trejj.talk.activities.EarnCreditsActivity.BIG_PACK_CREDITS;
+import static net.trejj.talk.activities.EarnCreditsActivity.BIG_PACK_DESC;
 import static net.trejj.talk.activities.EarnCreditsActivity.BIG_PACK_ID;
 import static net.trejj.talk.activities.EarnCreditsActivity.MEDIUM_PACK_CREDITS;
+import static net.trejj.talk.activities.EarnCreditsActivity.MEDIUM_PACK_DESC;
 import static net.trejj.talk.activities.EarnCreditsActivity.MEDIUM_PACK_ID;
 import static net.trejj.talk.activities.EarnCreditsActivity.SMALL_PACK_CREDITS;
+import static net.trejj.talk.activities.EarnCreditsActivity.SMALL_PACK_DESC;
 import static net.trejj.talk.activities.EarnCreditsActivity.SMALL_PACK_ID;
 
 
@@ -54,11 +57,12 @@ public class SkuAdapter extends RecyclerView.Adapter<SkuAdapter.ViewHolder> {
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView name, price;
+        private TextView name, price, desc;
         private Button buy;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            desc = itemView.findViewById(R.id.desc);
             name = (TextView) itemView.findViewById(R.id.name);
             price = itemView.findViewById(R.id.price);
             buy = itemView.findViewById(R.id.buy);
@@ -68,11 +72,15 @@ public class SkuAdapter extends RecyclerView.Adapter<SkuAdapter.ViewHolder> {
 
             if (position==0){
                 name.setText(SMALL_PACK_CREDITS+" Credits");
+                desc.setText(SMALL_PACK_DESC);
             }else if (position==1){
                 name.setText(MEDIUM_PACK_CREDITS+" Credits");
+                desc.setText(MEDIUM_PACK_DESC);
             }else if (position==2){
                 name.setText(BIG_PACK_CREDITS+" Credits");
+                desc.setText(BIG_PACK_DESC);
             }
+
             price.setText("Price "+item.getPrice());
 
             itemView.setOnClickListener(new View.OnClickListener() {
