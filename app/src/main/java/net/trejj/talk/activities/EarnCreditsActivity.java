@@ -278,7 +278,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
         // mPaymentProductModels.add(skuDetails);
         mPaymentProductListAdapter.notifyDataSetChanged();
 
-        productModel = mPaymentProductModels.get(0);
+        productModel = mPaymentProductModels.get(1);
 
     }
     public void initPurchaseFlow(SkuDetails details){
@@ -381,7 +381,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                         initPurchaseFlow(productModel);
                         dialogInterface.dismiss();
                     }
-                }).setNegativeButton("Card", new DialogInterface.OnClickListener() {
+                }).setNeutralButton("Card", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 for(int i=0;i<creditsModel.size();i++){
@@ -424,20 +424,11 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                         .setEncryptionKey("FLWSECK-9f7ddf5b716f604c840060d9ddfeb46e-X")
                         .setTxRef("eee"+new Random().nextInt(61) + 20)
 //                        .setPhoneNumber(phoneNumber, boolean)
-                    .acceptAccountPayments(true)
                     .acceptCardPayments(true)
-                    .acceptMpesaPayments(true)
-                    .acceptAchPayments(true)
                     .acceptGHMobileMoneyPayments(true)
                     .acceptUgMobileMoneyPayments(true)
                     .acceptZmMobileMoneyPayments(true)
                     .acceptRwfMobileMoneyPayments(true)
-                    .acceptSaBankPayments(true)
-                    .acceptUkPayments(true)
-                    .acceptBankTransferPayments(true)
-                    .acceptUssdPayments(true)
-                    .acceptBarterPayments(true)
-                    .acceptFrancMobileMoneyPayments(true)
                     .allowSaveCardFeature(true)
 //                    .onStagingEnv(boolean)
                     .setMeta(meta)

@@ -44,7 +44,7 @@ public class SkuAdapter extends RecyclerView.Adapter<SkuAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(items.get(position), listener);
+        holder.bind(items.get(position), listener,position);
     }
 
     @Override
@@ -64,13 +64,13 @@ public class SkuAdapter extends RecyclerView.Adapter<SkuAdapter.ViewHolder> {
             buy = itemView.findViewById(R.id.buy);
         }
 
-        public void bind(final SkuDetails item, final OnItemClickListener listener) {
+        public void bind(final SkuDetails item, final OnItemClickListener listener,int position) {
 
-            if (item.getSku().equals(SMALL_PACK_ID)){
+            if (position==0){
                 name.setText(SMALL_PACK_CREDITS+" Credits");
-            }else if (item.getSku().equals(MEDIUM_PACK_ID)){
+            }else if (position==1){
                 name.setText(MEDIUM_PACK_CREDITS+" Credits");
-            }else if (item.getSku().equals(BIG_PACK_ID)){
+            }else if (position==2){
                 name.setText(BIG_PACK_CREDITS+" Credits");
             }
             price.setText("Price "+item.getPrice());
