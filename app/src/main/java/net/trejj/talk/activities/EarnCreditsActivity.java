@@ -410,7 +410,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                         .setlName("Credits")
                         .setNarration("Buy credits for rubytalk")
                         .setPublicKey("FLWPUBK-91dc7de22da7f34f10f562c1184b73e8-X")
-                        .setEncryptionKey("FLWSECK-9f7ddf5b716f604c840060d9ddfeb46e-X")
+                        .setEncryptionKey("9f7ddf5b716fce90ac3b5a87")
                         .setTxRef("eee"+new Random().nextInt(61) + 20)
 //                        .setPhoneNumber(phoneNumber, boolean)
                     .acceptCardPayments(true)
