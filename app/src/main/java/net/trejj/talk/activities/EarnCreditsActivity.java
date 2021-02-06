@@ -401,26 +401,27 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                         break;
                     }
                 }
-                List<Meta> meta = new ArrayList<Meta>();
-                meta.add(new Meta("creds",cred));
+//                List<Meta> meta = new ArrayList<Meta>();
+//                meta.add(new Meta("creds",cred));
                 new RaveUiManager(EarnCreditsActivity.this).setAmount(Double.parseDouble( price))
                         .setCurrency("USD")
-                        .setEmail("no@gmail.com")
+                        .setEmail("mahevstark@gmail.com")
                         .setfName("Buyer")
                         .setlName("Credits")
                         .setNarration("Buy credits for rubytalk")
                         .setPublicKey("FLWPUBK-91dc7de22da7f34f10f562c1184b73e8-X")
-                        .setEncryptionKey("FLWSECK-9f7ddf5b716f604c840060d9ddfeb46e-X")
+                        .setEncryptionKey("9f7ddf5b716fce90ac3b5a87")
                         .setTxRef("eee"+new Random().nextInt(61) + 20)
 //                        .setPhoneNumber(phoneNumber, boolean)
                     .acceptCardPayments(true)
+                        .setAmount(0.2)
                     .acceptGHMobileMoneyPayments(true)
                     .acceptUgMobileMoneyPayments(true)
                     .acceptZmMobileMoneyPayments(true)
                     .acceptRwfMobileMoneyPayments(true)
                     .allowSaveCardFeature(true)
-//                    .onStagingEnv(boolean)
-                    .setMeta(meta)
+                    .onStagingEnv(false)
+//                    .setMeta(meta)
 //                        .withTheme(styleId)
 //                        .isPreAuth(boolean)
 //                    .setSubAccounts(List<SubAccount>)
