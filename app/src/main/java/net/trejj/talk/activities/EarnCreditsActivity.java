@@ -419,7 +419,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                     .acceptZmMobileMoneyPayments(true)
                     .acceptRwfMobileMoneyPayments(true)
                     .allowSaveCardFeature(true)
-//                    .onStagingEnv(boolean)
+                    .onStagingEnv(false)
                     .setMeta(meta)
 //                        .withTheme(styleId)
 //                        .isPreAuth(boolean)
