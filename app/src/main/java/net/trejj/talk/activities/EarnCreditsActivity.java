@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -54,6 +55,12 @@ import net.trejj.talk.model.CreditsModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -405,6 +412,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
 //                return;
                 List<Meta> meta = new ArrayList<Meta>();
                 meta.add(new Meta("creds",cred));
+                meta.add(new Meta("userId",FirebaseAuth.getInstance().getCurrentUser().getUid()));
                 new RaveUiManager(EarnCreditsActivity.this).setAmount(Double.parseDouble(price))
                         .setCurrency("USD")
                         .setEmail("no@gmail.com")
@@ -455,10 +463,12 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
             JSONObject msg;
             String msgString = "";
             String status = "failed";
+            int transId = 0;
             try {
                 msg = m.getJSONObject("data");
                 msgString = msg.getString("chargeResponseMessage");
                 status = msg.getString("status");
+                transId = msg.getInt("id");
             }
             catch (Exception e)
             {
@@ -469,28 +479,43 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
 
 
 //            productModel.get
-            if (resultCode == RavePayActivity.RESULT_SUCCESS && "success".equals(status.toLowerCase())) {
-//                Toast.makeText(this, "SUCCESS " + message, Toast.LENGTH_SHORT).show();
-                double newPoints = Double.parseDouble(previousPoints.toString()) + Double.parseDouble(cred);
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("credits");
-                reference.setValue(newPoints).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            AlertDialog.Builder  builder = new AlertDialog.Builder(EarnCreditsActivity.this);
-                            builder.setMessage("Congratulations, you have successfully purchased "+ cred + " credits!")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        RetriveData();
-                                        dialogInterface.dismiss();
-                                        EarnCreditsActivity.super.onBackPressed();
-                                    }
-                                }).show();
+            if (resultCode == RavePayActivity.RESULT_SUCCESS) {
+
+                if("successful".equals(status.toLowerCase()))
+                {
+
+
+                    //                Toast.makeText(this, "SUCCESS " + message, Toast.LENGTH_SHORT).show();
+                    double newPoints = Double.parseDouble(previousPoints.toString()) + Double.parseDouble(cred);
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("credits");
+                    reference.setValue(newPoints).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                AlertDialog.Builder  builder = new AlertDialog.Builder(EarnCreditsActivity.this);
+                                builder.setMessage("Congratulations, you have successfully purchased "+ cred + " credits!")
+                                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                RetriveData();
+                                                dialogInterface.dismiss();
+                                                EarnCreditsActivity.super.onBackPressed();
+                                            }
+                                        }).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }
+
+            else {
+                // post this variable
+
+//                    transId
+
+//                    to: https://talk.trejj.net/verification.php
+            }
+
             }
             else if (resultCode == RavePayActivity.RESULT_ERROR) {
                 Toast.makeText(this, "ERROR " + message, Toast.LENGTH_SHORT).show();
@@ -537,4 +562,5 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
     public void onDestroy() {
         super.onDestroy();
     }
+
 }
