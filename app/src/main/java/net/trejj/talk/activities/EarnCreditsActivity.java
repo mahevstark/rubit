@@ -554,10 +554,10 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
 
             }
             else if (resultCode == RavePayActivity.RESULT_ERROR) {
-                Toast.makeText(this, "ERROR " + message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "ERROR "+msgString, Toast.LENGTH_SHORT).show();
             }
             else if (resultCode == RavePayActivity.RESULT_CANCELLED) {
-                Toast.makeText(this, "CANCELLED " + message, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "CANCELLED " + msgString, Toast.LENGTH_SHORT).show();
             }
             else{
 
