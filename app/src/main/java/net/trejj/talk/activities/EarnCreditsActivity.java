@@ -419,7 +419,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
 //<<<<<<< HEAD
 //                List<Meta> meta = new ArrayList<Meta>();
 //                meta.add(new Meta("creds",cred));
-                new RaveUiManager(EarnCreditsActivity.this).setAmount(Double.parseDouble( price));
+//                new RaveUiManager(EarnCreditsActivity.this).setAmount(Double.parseDouble( price));
 //=======
                 Log.e("DataTalk",price.toString());
 //                return;
@@ -438,7 +438,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                         .setTxRef("eee"+new Random().nextInt(61) + 20)
 //                        .setPhoneNumber(phoneNumber, boolean)
                     .acceptCardPayments(true)
-                        .setAmount(0.2)
+
                     .acceptGHMobileMoneyPayments(true)
                     .acceptUgMobileMoneyPayments(true)
                     .acceptZmMobileMoneyPayments(true)
