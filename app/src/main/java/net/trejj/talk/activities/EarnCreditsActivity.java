@@ -3,10 +3,12 @@ package net.trejj.talk.activities;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -46,6 +48,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sinch.gson.JsonObject;
 
+import net.trejj.talk.APIService;
+import net.trejj.talk.Api;
+import net.trejj.talk.ApiUtils;
 import net.trejj.talk.R;
 import net.trejj.talk.activities.ChargePaystack;
 import net.trejj.talk.adapters.SkuAdapter;
@@ -54,9 +59,19 @@ import net.trejj.talk.model.CreditsModel;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter.OnItemClickListener, PurchasesUpdatedListener {
@@ -250,7 +265,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                     creditsModel.add(new CreditsModel(snapshot.getKey().toString(),snapshot.child("credits").getValue().toString(),
                             snapshot.child("sku").getValue().toString(),snapshot.child("type").getValue().toString(),
                             snapshot.child("title").getValue().toString(), snapshot.child("price").getValue().toString(),
-                            snapshot.child("price_usd").toString(),snapshot.child("desc").getValue().toString()));
+                            snapshot.child("price_usd").getValue().toString(),snapshot.child("desc").getValue().toString()));
 
                 }
 
@@ -396,14 +411,23 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                 for(int i=0;i<creditsModel.size();i++){
                     if(item.getSku().equals(creditsModel.get(i).getSku())){
                         cred = creditsModel.get(i).getCredits();
-                        price = creditsModel.get(i).getPrice();
+                        price = creditsModel.get(i).getPrice_usd();
                         title = creditsModel.get(i).getTitle();
                         break;
                     }
                 }
+//<<<<<<< HEAD
 //                List<Meta> meta = new ArrayList<Meta>();
 //                meta.add(new Meta("creds",cred));
-                new RaveUiManager(EarnCreditsActivity.this).setAmount(Double.parseDouble( price))
+                new RaveUiManager(EarnCreditsActivity.this).setAmount(Double.parseDouble( price));
+//=======
+                Log.e("DataTalk",price.toString());
+//                return;
+                List<Meta> meta = new ArrayList<Meta>();
+                meta.add(new Meta("creds",cred));
+                meta.add(new Meta("userId",FirebaseAuth.getInstance().getCurrentUser().getUid()));
+                new RaveUiManager(EarnCreditsActivity.this).setAmount(Double.parseDouble(price))
+//>>>>>>> origin/main
                         .setCurrency("USD")
                         .setEmail("mahevstark@gmail.com")
                         .setfName("Buyer")
@@ -421,7 +445,11 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                     .acceptRwfMobileMoneyPayments(true)
                     .allowSaveCardFeature(true)
                     .onStagingEnv(false)
+//<<<<<<< HEAD
 //                    .setMeta(meta)
+//=======
+                    .setMeta(meta)
+//>>>>>>> origin/main
 //                        .withTheme(styleId)
 //                        .isPreAuth(boolean)
 //                    .setSubAccounts(List<SubAccount>)
@@ -440,42 +468,100 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
         if (requestCode == RaveConstants.RAVE_REQUEST_CODE && data != null) {
             String message = data.getStringExtra("response");
             String creds = "0";
+            JSONObject m;
             try {
-                JSONObject m = new JSONObject(message);
+                m = new JSONObject(message);
                 String y = m.getString("data");
+                Log.e("String",m.toString());
                 Log.e("newWorld",cred);
             } catch (JSONException e) {
                 e.printStackTrace();
+                return;
             }
+
+            JSONObject msg;
+            String msgString = "";
+            String status = "failed";
+            int transId = 0;
+            try {
+                msg = m.getJSONObject("data");
+                msgString = msg.getString("chargeResponseMessage");
+                status = msg.getString("status");
+                transId = msg.getInt("id");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                Toast.makeText(this, "Failed, " + msgString, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
 //            productModel.get
             if (resultCode == RavePayActivity.RESULT_SUCCESS) {
-//                Toast.makeText(this, "SUCCESS " + message, Toast.LENGTH_SHORT).show();
-                double newPoints = Double.parseDouble(previousPoints.toString()) + Double.parseDouble(cred);
-                DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users")
-                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("credits");
-                reference.setValue(newPoints).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            AlertDialog.Builder  builder = new AlertDialog.Builder(EarnCreditsActivity.this);
-                            builder.setMessage("Congratulations, you have successfully purchased "+ cred + " credits!")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        RetriveData();
-                                        dialogInterface.dismiss();
-                                        EarnCreditsActivity.super.onBackPressed();
-                                    }
-                                }).show();
+
+                if("successful".equals(status.toLowerCase()))
+                {
+
+
+                    //                Toast.makeText(this, "SUCCESS " + message, Toast.LENGTH_SHORT).show();
+                    double newPoints = Double.parseDouble(previousPoints.toString()) + Double.parseDouble(cred);
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users")
+                            .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("credits");
+                    reference.setValue(newPoints).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()){
+                                AlertDialog.Builder  builder = new AlertDialog.Builder(EarnCreditsActivity.this);
+                                builder.setMessage("Congratulations, you have successfully purchased "+ cred + " credits!")
+                                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                RetriveData();
+                                                dialogInterface.dismiss();
+                                                EarnCreditsActivity.super.onBackPressed();
+                                            }
+                                        }).show();
+                            }
                         }
-                    }
-                });
+                    });
+                }
+
+            else {
+                    APIService apiService = ApiUtils.getAPIService();
+                    initpDialog(this,"Please wait...");
+                    showpDialog();
+                    apiService.validation(transId).enqueue(new Callback<Api>() {
+                        @Override
+                        public void onResponse(Call<Api> call, Response<Api> response) {
+                            Log.i("successsss",response.body().getAction());
+                            hidepDialog();
+                        }
+
+                        @Override
+                        public void onFailure(Call<Api> call, Throwable t) {
+                            Log.i("successsss",t.getMessage());
+                            hidepDialog();
+                        }
+                    });
+
+                // post this variable
+
+//                    transId
+
+//                    to: https://talk.trejj.net/verification.php
+            }
+
             }
             else if (resultCode == RavePayActivity.RESULT_ERROR) {
                 Toast.makeText(this, "ERROR " + message, Toast.LENGTH_SHORT).show();
             }
             else if (resultCode == RavePayActivity.RESULT_CANCELLED) {
                 Toast.makeText(this, "CANCELLED " + message, Toast.LENGTH_SHORT).show();
+            }
+            else{
+
+                Toast.makeText(this, "Failed, " + msgString, Toast.LENGTH_SHORT).show();
             }
         }
         else {
@@ -512,4 +598,24 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
     public void onDestroy() {
         super.onDestroy();
     }
+
+    private static ProgressDialog pDialog;
+    public static void initpDialog(Context context, String msg) {
+
+        pDialog = new ProgressDialog(context);
+        pDialog.setMessage(msg);
+        pDialog.setCancelable(false);
+    }
+
+    public static void showpDialog() {
+
+        if (!pDialog.isShowing()) pDialog.show();
+    }
+
+    public static void hidepDialog() {
+
+        if (pDialog.isShowing()) pDialog.dismiss();
+    }
+
+
 }
