@@ -250,7 +250,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                     creditsModel.add(new CreditsModel(snapshot.getKey().toString(),snapshot.child("credits").getValue().toString(),
                             snapshot.child("sku").getValue().toString(),snapshot.child("type").getValue().toString(),
                             snapshot.child("title").getValue().toString(), snapshot.child("price").getValue().toString(),
-                            snapshot.child("price_usd").toString(),snapshot.child("desc").getValue().toString()));
+                            snapshot.child("price_usd").getValue().toString(),snapshot.child("desc").getValue().toString()));
 
                 }
 
@@ -396,14 +396,16 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
                 for(int i=0;i<creditsModel.size();i++){
                     if(item.getSku().equals(creditsModel.get(i).getSku())){
                         cred = creditsModel.get(i).getCredits();
-                        price = creditsModel.get(i).getPrice();
+                        price = creditsModel.get(i).getPrice_usd();
                         title = creditsModel.get(i).getTitle();
                         break;
                     }
                 }
+                Log.e("DataTalk",price.toString());
+//                return;
                 List<Meta> meta = new ArrayList<Meta>();
                 meta.add(new Meta("creds",cred));
-                new RaveUiManager(EarnCreditsActivity.this).setAmount(Double.parseDouble( price))
+                new RaveUiManager(EarnCreditsActivity.this).setAmount(Double.parseDouble(price))
                         .setCurrency("USD")
                         .setEmail("no@gmail.com")
                         .setfName("Buyer")
@@ -439,15 +441,35 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
         if (requestCode == RaveConstants.RAVE_REQUEST_CODE && data != null) {
             String message = data.getStringExtra("response");
             String creds = "0";
+            JSONObject m;
             try {
-                JSONObject m = new JSONObject(message);
+                m = new JSONObject(message);
                 String y = m.getString("data");
+                Log.e("String",m.toString());
                 Log.e("newWorld",cred);
             } catch (JSONException e) {
                 e.printStackTrace();
+                return;
             }
+
+            JSONObject msg;
+            String msgString = "";
+            String status = "failed";
+            try {
+                msg = m.getJSONObject("data");
+                msgString = msg.getString("chargeResponseMessage");
+                status = msg.getString("status");
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+                Toast.makeText(this, "Failed, " + msgString, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
 //            productModel.get
-            if (resultCode == RavePayActivity.RESULT_SUCCESS) {
+            if (resultCode == RavePayActivity.RESULT_SUCCESS && "success".equals(status.toLowerCase())) {
 //                Toast.makeText(this, "SUCCESS " + message, Toast.LENGTH_SHORT).show();
                 double newPoints = Double.parseDouble(previousPoints.toString()) + Double.parseDouble(cred);
                 DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users")
@@ -475,6 +497,10 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
             }
             else if (resultCode == RavePayActivity.RESULT_CANCELLED) {
                 Toast.makeText(this, "CANCELLED " + message, Toast.LENGTH_SHORT).show();
+            }
+            else{
+
+                Toast.makeText(this, "Failed, " + msgString, Toast.LENGTH_SHORT).show();
             }
         }
         else {
