@@ -1,13 +1,11 @@
-package com.limecoders.quizapp.Util;
+package net.trejj.talk;
 
-import com.limecoders.quizapp.ApiService.APIService;
-import com.limecoders.quizapp.Retrofit.RetrofitClient;
 
 public class ApiUtils {
 
     private ApiUtils() {}
 
-    public static final String BASE_URL = "https://www.inventerit.com";
+    public static final String BASE_URL = "https://talk.trejj.net";
 
     public static APIService getAPIService() {
 
