@@ -26,11 +26,11 @@ android {
 
         resValue 'string', "group_invite_host", ""
 
-        resValue 'string' , "update_app_link", "http://devlomi.com/"
+        resValue 'string' , "update_app_link", "https://trejj.net/"
 
         resValue 'string', "twitter_account", ""
-        resValue 'string', "website", "http://devlomi.com/"
-        resValue 'string', "email", ""
+        resValue 'string', "website", "https://trejj.net/"
+        resValue 'string', "email", "talk@trejj.net"
 
         resValue 'string', "agora_app_id", "3301976d4fe84932b2a2bbd4d24e3a10"
 
