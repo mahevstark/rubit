@@ -486,4 +486,5 @@ private void runTimer2(int duration) {
 
         getApplicationContext().bindService(serviceIntent, this, BIND_AUTO_CREATE);
     }
+    //removed
 }
