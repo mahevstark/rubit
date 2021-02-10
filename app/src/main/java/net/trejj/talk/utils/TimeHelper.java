@@ -39,7 +39,9 @@ public class TimeHelper {
             return "" /* now */;
         else if (secondsAgo < hour)
             //minutes ago
-            return secondsAgo / minute + SEPARATOR + MyApp.context().getResources().getString(R.string.minutes_ago);
+            if(minute==1){
+                return secondsAgo / minute + SEPARATOR + "minute";
+            }else return secondsAgo / minute + SEPARATOR + MyApp.context().getResources().getString(R.string.minutes_ago);
         else if (secondsAgo < day) {
             //hours ago
             int hoursAgo = (int) (secondsAgo / hour);
