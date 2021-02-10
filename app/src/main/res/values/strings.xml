@@ -496,6 +496,8 @@
     <string name="small_pack_sub_title">Small Pack</string>
     <string name="buy_now">Buy Now</string>
     <string name="buycredit">Buy Credit</string>
+    <string name="minute_ago">minute</string>
+    <string name="hour_ago">hour</string>
 
 
     <string-array name="DialingCountryCode">
