@@ -301,8 +301,9 @@ public class SinchService extends Service implements VideoCallListener, Proximit
         public Call callPhoneNumber(String phoneNumber) {
 
             if (mSinchClient == null) {
-                createClient();
+                start();
             }
+
             return mSinchClient.getCallClient().callPhoneNumber(phoneNumber);
         }
 

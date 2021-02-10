@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -143,21 +144,27 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
     public void onSinchConnected() {
 
         if(!isCallInProgress) {
+
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
-                    mCallId = call1.getCallId();
+                    try {
+                        Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
+                        mCallId = call1.getCallId();
 
-                    Call call = getSinchServiceInterface().getCall(mCallId);
-                    if (call != null) {
-                        call.addCallListener(new SinchCallListener());
-                        //mCallerName.setText(call.getRemoteUserId());
-                        mCallerName.setText(callername);
-                        mCallState.setText(call.getState().toString());
-                    } else {
-                        Log.e(TAG, "Started with invalid callId, aborting.");
-                        finish();
+                        Call call = getSinchServiceInterface().getCall(mCallId);
+                        if (call != null) {
+                            call.addCallListener(new SinchCallListener());
+                            //mCallerName.setText(call.getRemoteUserId());
+                            mCallerName.setText(callername);
+                            mCallState.setText(call.getState().toString());
+                        } else {
+                            Log.e(TAG, "Started with invalid callId, aborting.");
+                            finish();
+                        }
+                    }catch (Exception e){
+                        Toast.makeText(CallScreenActivity.this, "Calling service is not available in your area at the moment", Toast.LENGTH_LONG).show();
+                        CallScreenActivity.super.onBackPressed();
                     }
                 }
             }, 3000);
@@ -349,6 +356,9 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
             CallDetails details = call.getDetails();
             RealmHelper.getInstance().updateCallInfoOnCallEnded(call.getCallId(), details.getDuration());
             endCall();
+            if(call.getDetails().getEndCause().toString().toLowerCase().equals("failure")){
+                Toast.makeText(CallScreenActivity.this, "Call failed", Toast.LENGTH_SHORT).show();
+            }
 //            saveCallHistory(System.currentTimeMillis(),call.getDetails().getDuration(),call.getDetails().getEndCause());
         }
 

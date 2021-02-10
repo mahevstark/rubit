@@ -45,6 +45,8 @@ class CallsFragment : BaseFragment(), ActionMode.Callback, CallsAdapter.OnClickL
         } catch (castException: ClassCastException) {
             /** The activity does not implement the listener.  */
         }
+
+//        start();
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

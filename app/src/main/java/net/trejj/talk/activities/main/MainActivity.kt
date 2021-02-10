@@ -123,6 +123,7 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
                 3 -> startActivity(Intent(this@MainActivity, NewCallActivity::class.java))
             }
         }
+//        start();
 
         textStatusFab.setOnClickListener { startActivityForResult(Intent(this, TextStatusActivity::class.java), REQUEST_CODE_TEXT_STATUS) }
 
