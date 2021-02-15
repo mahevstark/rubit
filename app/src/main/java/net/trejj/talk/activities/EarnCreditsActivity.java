@@ -73,7 +73,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
 public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter.OnItemClickListener, PurchasesUpdatedListener {
 
     TextView credits;
