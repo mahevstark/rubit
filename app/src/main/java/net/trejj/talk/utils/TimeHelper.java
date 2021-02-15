@@ -34,6 +34,7 @@ public class TimeHelper {
         int day = 24 * hour;
         int week = 7 * day;
 
+        //changes
 
         if (secondsAgo < minute)
             return "" /* now */;

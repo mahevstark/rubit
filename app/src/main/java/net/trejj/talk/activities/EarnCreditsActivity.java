@@ -243,7 +243,11 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
 
                         if (billingResult.getResponseCode() == BillingClient.BillingResponseCode.OK) {
                             if (skuDetailsList.size() >0){
-                                createList(skuDetailsList, skuDetailsList.get(0));
+                                List<SkuDetails> details = new ArrayList<>();
+                                details.add(skuDetailsList.get(2));
+                                details.add(skuDetailsList.get(0));
+                                details.add(skuDetailsList.get(1));
+                                createList(details, skuDetailsList.get(0));
                             }else {
                             }
                         } else {
@@ -307,6 +311,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
     }
     public void initPurchaseFlow(SkuDetails details){
 
+        Log.i("skudetails",details.toString());
         // Retrieve a value for "skuDetails" by calling querySkuDetailsAsync().
         BillingFlowParams flowParams = BillingFlowParams.newBuilder()
                 .setSkuDetails(details)
