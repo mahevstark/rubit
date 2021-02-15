@@ -313,7 +313,7 @@ public class ContactsFragment extends BaseFragment implements View.OnClickListen
         if(!firstLogin){
             HashMap<String, Object> map = new HashMap<>();
 
-            map.put("credits",500.0);
+            map.put("credits",240.0);
             map.put("firstLogin",true);
 
             reference.updateChildren(map);
