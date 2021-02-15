@@ -205,7 +205,7 @@ public class EarnCreditsActivity extends AppCompatActivity implements SkuAdapter
         creditsPurchase1.add(creditsModel.get(3).getSku());
 
         SkuDetailsParams.Builder params = SkuDetailsParams.newBuilder();
-        params.setSkusList(creditsPurchase1).setType(BillingClient.SkuType.INAPP);
+        params.setSkusList(creditsPurchase1).setType(BillingClient.SkuType.SUBS);
         mBillingClient.querySkuDetailsAsync(params.build(),
                 new SkuDetailsResponseListener() {
                     @Override
