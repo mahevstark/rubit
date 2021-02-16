@@ -35,6 +35,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.sinch.android.rtc.SinchError
+import kotlinx.android.synthetic.main.callscreen.*
 import net.trejj.talk.Function
 import net.trejj.talk.R
 import net.trejj.talk.activities.*
@@ -58,6 +59,8 @@ import net.trejj.talk.utils.*
 import net.trejj.talk.utils.network.FireManager
 import net.trejj.talk.views.dialogs.IgnoreBatteryDialog
 import org.greenrobot.eventbus.EventBus
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListener, FragmentCallback, StatusFragmentCallbacks, SinchService.StartFailedListener {
@@ -105,7 +108,6 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
 
         fireListener = FireListener()
         startServices()
-
 
         users = RealmHelper.getInstance().listOfUsers
 
@@ -224,8 +226,19 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
         }, {
 
         })
+        val time: String = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
+        val preferences: SharedPreferences = getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE)
+        val currentTime: String = time.substring(6,8)
 
 
+
+        val diff: Int = Integer.parseInt(currentTime) - Integer.parseInt(preferences.getString("currentTime","0"))
+
+        if(diff>3){
+            val editor: SharedPreferences.Editor = preferences.edit()
+            editor.putBoolean("isCallInProgress",false)
+            editor.apply()
+        }
     }
 
     override fun onSinchConnected() {

@@ -95,7 +95,6 @@ class CallingService : Service(), ProximitySensor.Delegate, AudioManager.OnAudio
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
 
-
         if (intent != null) {
             if (intent.hasExtra(IntentUtils.CALL_ACTION_TYPE)) {
                 val action = intent.getIntExtra(IntentUtils.CALL_ACTION_TYPE, -1)

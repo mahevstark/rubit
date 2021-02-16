@@ -25,7 +25,6 @@ import androidx.core.view.isVisible
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.transition.AutoTransition
 import androidx.transition.TransitionManager
-import androidx.transition.Visibility
 import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.agora.rtc.Constants.CONNECTION_STATE_CONNECTED
@@ -33,7 +32,6 @@ import io.agora.rtc.RtcEngine
 import io.agora.rtc.video.VideoCanvas
 import io.reactivex.rxkotlin.addTo
 import kotlinx.android.synthetic.main.activity_phone_call.*
-import kotlinx.android.synthetic.main.row_call.view.*
 import net.trejj.talk.CallRunningService
 import net.trejj.talk.R
 import net.trejj.talk.activities.BaseActivity
@@ -61,6 +59,7 @@ import net.trejj.talk.utils.network.GroupManager
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.text.SimpleDateFormat
 import java.util.*
 
 class CallingActivity : BaseActivity(), ServiceConnection {
@@ -437,7 +436,6 @@ class CallingActivity : BaseActivity(), ServiceConnection {
 
     }
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun updateState(callingViewState: CallingViewState) {
         when (callingViewState) {
@@ -451,6 +449,11 @@ class CallingActivity : BaseActivity(), ServiceConnection {
             }
 
             is CallingViewState.UpdateDuration -> {
+                val currentTime: String = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
+                val preferences: SharedPreferences = getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE)
+                val editor: SharedPreferences.Editor = preferences.edit()
+                editor.putString("currentTime",currentTime)
+                editor.apply()
                 tvStatus.text = Util.formatCallTime(callingViewState.duration.toInt())
             }
 
@@ -819,8 +822,6 @@ class CallingActivity : BaseActivity(), ServiceConnection {
         broadcastReceiver?.let { broadcastReceiver ->
             LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
         }
-
-
 
 
         super.onDestroy()
