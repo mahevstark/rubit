@@ -190,6 +190,7 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
         setContentView(R.layout.callscreen);
 
         mAudioPlayer = new Audio(this);
+        Toast.makeText(CallScreenActivity.this,"1",Toast.LENGTH_SHORT).show();
 
         mCallDuration = (TextView) findViewById(R.id.callDuration);
         mCallDuration.setText("Duration");
@@ -482,9 +483,11 @@ private void runTimer2(int duration) {
     }
 
     private void bindService() {
+        Toast.makeText(CallScreenActivity.this,"2",Toast.LENGTH_SHORT).show();
         Intent serviceIntent = new Intent(this, SinchService.class);
-
+        Toast.makeText(CallScreenActivity.this,"3",Toast.LENGTH_SHORT).show();
         getApplicationContext().bindService(serviceIntent, this, BIND_AUTO_CREATE);
+        Toast.makeText(CallScreenActivity.this,"4",Toast.LENGTH_SHORT).show();
     }
     //removed
 }

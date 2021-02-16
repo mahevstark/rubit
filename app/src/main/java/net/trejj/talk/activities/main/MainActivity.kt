@@ -6,9 +6,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
 import android.view.ActionMode
@@ -21,30 +19,10 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.app.ActivityCompat
-import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
-import net.trejj.talk.R
-import net.trejj.talk.activities.*
-import net.trejj.talk.activities.settings.SettingsActivity
-import net.trejj.talk.adapters.ViewPagerAdapter
-import net.trejj.talk.common.ViewModelFactory
-import net.trejj.talk.common.extensions.findFragmentByTagForViewPager
-import net.trejj.talk.events.ExitUpdateActivityEvent
-import net.trejj.talk.events.NavigateToLockActivity
-import net.trejj.talk.fragments.BaseFragment
-import net.trejj.talk.interfaces.FragmentCallback
-import net.trejj.talk.interfaces.StatusFragmentCallbacks
-import net.trejj.talk.job.DailyBackupJob
-import net.trejj.talk.job.SaveTokenJob
-import net.trejj.talk.job.SetLastSeenJob
-import net.trejj.talk.model.realms.User
-import net.trejj.talk.services.*
-import net.trejj.talk.utils.*
-import net.trejj.talk.utils.network.FireManager
-import net.trejj.talk.views.dialogs.IgnoreBatteryDialog
 import com.droidninja.imageeditengine.ImageEditor
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
@@ -57,13 +35,29 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.sinch.android.rtc.SinchError
-import io.reactivex.Observable
-import io.reactivex.rxkotlin.addTo
 import net.trejj.talk.Function
+import net.trejj.talk.R
+import net.trejj.talk.activities.*
+import net.trejj.talk.activities.settings.SettingsActivity
+import net.trejj.talk.adapters.ViewPagerAdapter
+import net.trejj.talk.common.ViewModelFactory
+import net.trejj.talk.common.extensions.findFragmentByTagForViewPager
+import net.trejj.talk.events.ExitUpdateActivityEvent
+import net.trejj.talk.fragments.BaseFragment
+import net.trejj.talk.interfaces.FragmentCallback
+import net.trejj.talk.interfaces.StatusFragmentCallbacks
+import net.trejj.talk.job.DailyBackupJob
+import net.trejj.talk.job.SaveTokenJob
+import net.trejj.talk.job.SetLastSeenJob
+import net.trejj.talk.model.realms.User
+import net.trejj.talk.services.FCMRegistrationService
+import net.trejj.talk.services.InternetConnectedListener
+import net.trejj.talk.services.NetworkService
+import net.trejj.talk.services.SinchService
+import net.trejj.talk.utils.*
+import net.trejj.talk.utils.network.FireManager
+import net.trejj.talk.views.dialogs.IgnoreBatteryDialog
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
-import java.util.concurrent.TimeUnit
 
 
 class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListener, FragmentCallback, StatusFragmentCallbacks, SinchService.StartFailedListener {
@@ -580,6 +574,8 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
                 return
             }
             if (isCallEnabled) {
+
+                Toast.makeText(this@MainActivity, "Calling toast 1", Toast.LENGTH_SHORT).show()
                 val serviceIntent = Intent(this, SinchService::class.java)
                 serviceIntent.putExtra(IntentUtils.START_SINCH, true)
                 startService(serviceIntent)
@@ -597,6 +593,7 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
                     editor.putString("number",number)
                     editor.putString("callername",callername)
                     editor.apply()
+                    Toast.makeText(this@MainActivity, "Calling toast 2", Toast.LENGTH_SHORT).show()
                     startActivity(callScreen)
                 } else {
 
