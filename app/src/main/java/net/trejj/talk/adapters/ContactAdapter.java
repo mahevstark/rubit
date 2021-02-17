@@ -204,7 +204,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
         call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "Number click toast", Toast.LENGTH_SHORT).show();
                 ((MainActivity)context).CallNumber(Contactnumber,Contactname);
                 callOptionDialog.dismiss();
 

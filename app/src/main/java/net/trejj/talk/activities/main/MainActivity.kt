@@ -587,8 +587,6 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
                 return
             }
             if (isCallEnabled) {
-
-                Toast.makeText(this@MainActivity, "Calling toast 1", Toast.LENGTH_SHORT).show()
                 val serviceIntent = Intent(this, SinchService::class.java)
                 serviceIntent.putExtra(IntentUtils.START_SINCH, true)
                 startService(serviceIntent)
@@ -606,7 +604,6 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
                     editor.putString("number",number)
                     editor.putString("callername",callername)
                     editor.apply()
-                    Toast.makeText(this@MainActivity, "Calling toast 2", Toast.LENGTH_SHORT).show()
                     startActivity(callScreen)
                 } else {
 
