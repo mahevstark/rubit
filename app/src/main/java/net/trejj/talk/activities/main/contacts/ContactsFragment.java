@@ -352,6 +352,7 @@ public class ContactsFragment extends BaseFragment implements View.OnClickListen
                 TextChanged(newText);
                 return true;
             }
+
         });
         number.addTextChangedListener(new TextWatcher() {
             @Override

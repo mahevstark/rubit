@@ -226,19 +226,26 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
         }, {
 
         })
-        val time: String = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
         val preferences: SharedPreferences = getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE)
-        val currentTime: String = time.substring(6,8)
+        try {
+            val time: String = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
 
+            val currentTime: String = time.substring(6, 8)
 
+            val diff: Int = Integer.parseInt(currentTime) - Integer.parseInt(preferences.getString("currentTime", "0"))
 
-        val diff: Int = Integer.parseInt(currentTime) - Integer.parseInt(preferences.getString("currentTime","0"))
-
-        if(diff>3){
+            if (diff > 3) {
+                val editor: SharedPreferences.Editor = preferences.edit()
+                editor.putBoolean("isCallInProgress", false)
+                editor.apply()
+            }
+        }catch (e: Exception){
+            e.printStackTrace()
             val editor: SharedPreferences.Editor = preferences.edit()
-            editor.putBoolean("isCallInProgress",false)
+            editor.putBoolean("isCallInProgress", false)
             editor.apply()
         }
+
     }
 
     override fun onSinchConnected() {

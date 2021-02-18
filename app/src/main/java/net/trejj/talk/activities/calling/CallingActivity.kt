@@ -117,8 +117,12 @@ class CallingActivity : BaseActivity(), ServiceConnection {
 
         uid = intent.getStringExtra(IntentUtils.UID)
         phoneNumber = intent.getStringExtra(IntentUtils.PHONE)
-        callType = CallType.fromInt(intent.getIntExtra(IntentUtils.CALL_TYPE, CallType.VOICE.value))
-
+        try{
+            callType = CallType.fromInt(intent.getIntExtra(IntentUtils.CALL_TYPE, CallType.VOICE.value))
+        }catch (e:Exception){
+            e.printStackTrace()
+            callType = CallType.VOICE
+        }
         callDirection = intent.getIntExtra(IntentUtils.CALL_DIRECTION, -1)
         mCallId = intent.getStringExtra(IntentUtils.CALL_ID)
         action = intent.getIntExtra(IntentUtils.CALL_ACTION_TYPE, IntentUtils.NOTIFICATION_ACTION_NONE)

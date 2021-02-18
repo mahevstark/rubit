@@ -16,10 +16,7 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.recyclerview.widget.RecyclerView;
-
 import net.trejj.talk.Function;
 import net.trejj.talk.R;
 import net.trejj.talk.activities.main.MainActivity;
@@ -104,12 +101,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
         holder.name.setText(contact.getName());
         holder.phone.setText(contact.getNumber());
         ExistsResult exists = doesItExist(contact);
-        if(exists.getExists()) {
-            holder.invite.setVisibility(View.GONE);
-            GlideApp.with(context).load(exists.getImage()).into(holder.image);
-        }
-
-
 
         if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.Q){
             holder.invite.setBackgroundColor(context.getResources().getColor(R.color.white));
@@ -117,6 +108,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
             holder.name.setTextColor(context.getResources().getColor(R.color.white));
             holder.phone.setTextColor(context.getResources().getColor(R.color.white));
             holder.itemclick.setBackgroundColor(context.getResources().getColor(R.color.black));
+        }
+        if(exists.getExists()) {
+            holder.invite.setVisibility(View.GONE);
+            GlideApp.with(context).load(exists.getImage()).into(holder.image);
         }
         holder.itemclick.setOnClickListener(new View.OnClickListener() {
             @Override

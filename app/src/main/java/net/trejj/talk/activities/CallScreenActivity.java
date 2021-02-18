@@ -170,10 +170,14 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
                 }
             }, 3000);
         }else{
-            Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
-            mCallId = call1.getCallId();
-            endCall();
-            runTimer2(30);
+            try {
+                Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
+                mCallId = call1.getCallId();
+                endCall();
+                runTimer2(30);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
     }
@@ -366,8 +370,6 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
         @Override
         public void onCallEstablished(Call call) {
 
-            startService();
-
             runTimer(call);
             //Toast.makeText(CallScreenActivity.this, "call attended", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Call established");
@@ -385,6 +387,8 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
         @Override
         public void onCallProgressing(Call call) {
             Log.d(TAG, "Call progressing");
+
+            startService();
 
             String uid = call.getRemoteUserId();
             User user = new User();
