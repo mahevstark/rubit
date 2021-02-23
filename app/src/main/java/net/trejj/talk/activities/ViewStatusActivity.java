@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -157,7 +158,8 @@ public class ViewStatusActivity extends BaseActivity implements StoriesProgressV
     String timerStr = "";
 
 
-    private LinearLayout bottomSheetSeen, bottomSheetReply;
+    private RelativeLayout bottomSheetReply;
+    private LinearLayout bottomSheetSeen;
     SystemUiHelper systemUiHelper;
     //image story duration 7 seconds
     public static final long IMAGE_STORY_DURATION = 7000L;

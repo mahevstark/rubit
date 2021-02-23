@@ -217,8 +217,7 @@
         <activity
             android:name=".activities.ViewStatusActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/FullscreenTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+            android:theme="@style/FullscreenTheme" />
         <activity
             android:name=".activities.MyStatusActivity"
             android:label="@string/title_activity_my_status"
