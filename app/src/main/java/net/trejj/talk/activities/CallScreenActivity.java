@@ -153,6 +153,11 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
                         Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
                         mCallId = call1.getCallId();
 
+                        SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("mCallId",mCallId);
+                        editor.apply();
+
                         Call call = getSinchServiceInterface().getCall(mCallId);
                         if (call != null) {
                             call.addCallListener(new SinchCallListener());
@@ -171,10 +176,10 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
             }, 3000);
         }else{
             try {
-                Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
-                mCallId = call1.getCallId();
+//                Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
+//                mCallId = call1.getCallId();
                 endCall();
-                runTimer2(30);
+//                runTimer2(30);
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -305,8 +310,10 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
     private void endCall() {
 
         SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+        mCallId = preferences.getString("mCallId","");
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("isCallInProgress",true);
+        editor.putString("mCallId","");
         editor.apply();
 
         mAudioPlayer.stopProgressTone();
