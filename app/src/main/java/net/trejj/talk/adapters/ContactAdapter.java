@@ -112,6 +112,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
         if(exists.getExists()) {
             holder.invite.setVisibility(View.GONE);
             GlideApp.with(context).load(exists.getImage()).into(holder.image);
+        }else{
+            holder.invite.setVisibility(View.VISIBLE);
+            holder.image.setImageResource(R.drawable.profile_avatar);
         }
         holder.itemclick.setOnClickListener(new View.OnClickListener() {
             @Override
