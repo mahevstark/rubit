@@ -42,9 +42,9 @@ android {
         resValue 'string', "foursquare_client_secret", ""
 
         //AdMob Ads Units IDs
-        resValue 'string', "banner_unit_id_new_chat", ""
-        resValue 'string', "banner_unit_id_main", ""
-        resValue 'string', "interstitial_ad_id", ""
+        resValue 'string', "banner_unit_id_new_chat", "ca-app-pub-3940256099942544/6300978111"
+        resValue 'string', "banner_unit_id_main", "ca-app-pub-3940256099942544/6300978111"
+        resValue 'string', "interstitial_ad_id", "ca-app-pub-3940256099942544/1033173712"
         resValue 'string', "admob_app_id", "ca-app-pub-3940256099942544~3347511713"
 
         //AdMob Ads Enable/Disable
