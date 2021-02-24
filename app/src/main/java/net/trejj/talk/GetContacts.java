@@ -58,7 +58,12 @@ public class GetContacts extends AsyncTask<Void, Void, List> {
                         displayNumber = displayNumber.replace(")", "");
 
                         if(!String.valueOf(displayNumber.charAt(0)).equals("+"))
-                            displayNumber = ISOPrefix + displayNumber;
+                            if(displayNumber.startsWith("0")){
+                                displayNumber = ISOPrefix + displayNumber.substring(1);
+                            }else {
+                                displayNumber = ISOPrefix + displayNumber;
+                            }
+
                         ContactInfo contactInfo = new ContactInfo();
                         contactInfo.setName(displayName);
                         contactInfo.setNumber(displayNumber);
