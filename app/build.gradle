@@ -52,7 +52,7 @@ android {
         resValue 'bool', "is_status_ad_enabled", "true"
         resValue 'bool', "is_calls_ad_enabled", "true"
         resValue 'bool', "is_new_chat_ad_enabled", "true"
-        resValue 'bool', "is_interstitial_ad_enabled", "true"
+        resValue 'bool', "is_interstitial_ad_enabled", "false"
 
         //Max Group users,Broadcast,Status Time
         resValue 'integer', "max_status_video_time", "30"
