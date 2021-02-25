@@ -147,9 +147,9 @@ import com.devlomi.record_view.OnRecordClickListener;
 import com.devlomi.record_view.OnRecordListener;
 import com.devlomi.record_view.RecordView;
 import com.droidninja.imageeditengine.ImageEditor;
-//import com.google.android.gms.ads.AdListener;
-//import com.google.android.gms.ads.AdRequest;
-//import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
@@ -875,7 +875,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
 
         if (getResources().getBoolean(R.bool.is_interstitial_ad_enabled))
-//            loadInterstitialAd();
+            loadInterstitialAd();
 
 
         btnCancelImage.setOnClickListener(new View.OnClickListener() {
@@ -993,18 +993,18 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         return isGroup && user.getGroup() != null && user.getGroup().getUsers() != null;
     }
 
-//    private void loadInterstitialAd() {
-//        final InterstitialAd interstitialAd = new InterstitialAd(this);
-//        interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_id));
-//        interstitialAd.loadAd(new AdRequest.Builder().build());
-//        interstitialAd.setAdListener(new AdListener() {
-//            @Override
-//            public void onAdLoaded() {
-//                super.onAdLoaded();
-//                interstitialAd.show();
-//            }
-//        });
-//    }
+    private void loadInterstitialAd() {
+        final InterstitialAd interstitialAd = new InterstitialAd(this);
+        interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_id));
+        interstitialAd.loadAd(new AdRequest.Builder().build());
+        interstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                interstitialAd.show();
+            }
+        });
+    }
 
     @Override
     protected void onResume() {

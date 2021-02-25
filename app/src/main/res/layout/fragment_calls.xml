@@ -14,13 +14,13 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-<!--    <com.google.android.gms.ads.AdView-->
-<!--        android:id="@+id/ad_view"-->
-<!--        android:visibility="gone"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        ads:adSize="SMART_BANNER"-->
-<!--        ads:adUnitId="@string/banner_unit_id_main"/>-->
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/ad_view"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="@string/banner_unit_id_main"/>
 
 
 </LinearLayout>

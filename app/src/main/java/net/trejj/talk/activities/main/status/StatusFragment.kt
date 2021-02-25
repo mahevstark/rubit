@@ -39,7 +39,7 @@ import net.trejj.talk.utils.network.StatusManager
 import net.trejj.talk.views.HeaderViewDecoration
 import net.trejj.talk.views.TextViewWithShapeBackground
 import com.droidninja.imageeditengine.ImageEditor
-//import com.google.android.gms.ads.AdView
+import com.google.android.gms.ads.AdView
 import com.zhihu.matisse.Matisse
 import io.reactivex.rxkotlin.addTo
 import io.realm.RealmResults
@@ -57,7 +57,7 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
     private var header2pos = 0
     private var header1Title: String? = null
     private var header2Title = ""
-//    override var adView: AdView? = null
+    override var adView: AdView? = null
     private var callbacks: StatusFragmentCallbacks? = null
     private val statusManager = StatusManager()
 
@@ -100,8 +100,8 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
         rowStatusContainer = view.findViewById(R.id.row_status_container)
         profileImage = view.findViewById(R.id.profile_image)
 
-//        adView = ad_view
-//        adViewInitialized(adView)
+        adView = ad_view
+        adViewInitialized(adView)
 
         MAX_STATUS_VIDEO_TIME = resources.getInteger(R.integer.max_status_video_time)
         btnViewMyStatuses.setOnClickListener(View.OnClickListener {

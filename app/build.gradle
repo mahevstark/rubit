@@ -48,11 +48,11 @@ android {
         resValue 'string', "admob_app_id", "ca-app-pub-3940256099942544~3347511713"
 
         //AdMob Ads Enable/Disable
-        resValue 'bool', "are_ads_enabled", "false"
-        resValue 'bool', "is_status_ad_enabled", "false"
-        resValue 'bool', "is_calls_ad_enabled", "false"
-        resValue 'bool', "is_new_chat_ad_enabled", "false"
-        resValue 'bool', "is_interstitial_ad_enabled", "false"
+        resValue 'bool', "are_ads_enabled", "true"
+        resValue 'bool', "is_status_ad_enabled", "true"
+        resValue 'bool', "is_calls_ad_enabled", "true"
+        resValue 'bool', "is_new_chat_ad_enabled", "true"
+        resValue 'bool', "is_interstitial_ad_enabled", "true"
 
         //Max Group users,Broadcast,Status Time
         resValue 'integer', "max_status_video_time", "30"
@@ -103,7 +103,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.3.2'
     implementation 'com.google.firebase:firebase-database:19.3.1'
     implementation 'com.google.firebase:firebase-storage:19.1.1'
-//    implementation 'com.google.firebase:firebase-ads:19.3.0'
+    implementation 'com.google.firebase:firebase-ads:19.3.0'
     implementation 'com.google.firebase:firebase-functions:19.0.2'
 
     implementation 'com.hbb20:ccp:2.4.0'
