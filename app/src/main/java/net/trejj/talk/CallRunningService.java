@@ -44,7 +44,7 @@ public class CallRunningService extends Service {
                 0, notificationIntent, 0);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Trejj Talk")
-                .setContentText("Call in progress")
+                .setContentText("Tap to end the call")
                 .setSmallIcon(R.drawable.ic_call)
                 .setContentIntent(pendingIntent)
                 .build();
