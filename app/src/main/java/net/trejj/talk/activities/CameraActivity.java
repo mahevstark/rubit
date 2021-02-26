@@ -33,9 +33,9 @@ import me.zhanghai.android.systemuihelper.SystemUiHelper;
 
 public class CameraActivity extends AppCompatActivity {
     //max image selectable(when choosing from gallery)
-    public static final int MAX_IMAGE_SELECTABLE = 5;
+    public static final int MAX_IMAGE_SELECTABLE = 20;
     //max video selectable(when choosing from gallery)
-    public static final int MAX_VIDEO_SELECTABLE = 1;
+    public static final int MAX_VIDEO_SELECTABLE = 20;
     public static final int REQUEST_CODE_PICK_FROM_GALLERY = 2323;
     private JCameraView jCameraView;
     private Chronometer chronometer;
