@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
+
+
 import net.trejj.talk.Function;
 import net.trejj.talk.R;
 import net.trejj.talk.activities.main.MainActivity;
@@ -109,13 +111,17 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
             holder.phone.setTextColor(context.getResources().getColor(R.color.white));
             holder.itemclick.setBackgroundColor(context.getResources().getColor(R.color.black));
         }
+
+
         if(exists.getExists()) {
             holder.invite.setVisibility(View.GONE);
+//            Picasso.get().load(exists.getImage()).into(holder.image);
             GlideApp.with(context).load(exists.getImage()).into(holder.image);
         }else{
             holder.invite.setVisibility(View.VISIBLE);
             holder.image.setImageResource(R.drawable.profile_avatar);
         }
+
         holder.itemclick.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -55,6 +55,8 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static android.content.Context.BIND_AUTO_CREATE;
+
 /** Created by AwsmCreators * */
 public class CallScreenActivity extends BaseActivity implements SensorEventListener {
 
@@ -66,6 +68,8 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
     Double callrate;
     Double finalcost;
     Handler handler;
+
+    long timeWhenStopped = 0;
 
     private Audio mAudioPlayer;
     private Timer mTimer;
@@ -144,6 +148,7 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
     @Override
     public void onSinchConnected() {
 
+        chronometer = findViewById(R.id.chronometer);
         if(!isCallInProgress) {
 
             new Handler().postDelayed(new Runnable() {
@@ -152,6 +157,11 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
                     try {
                         Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
                         mCallId = call1.getCallId();
+
+                        SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.putString("mCallId",mCallId);
+                        editor.apply();
 
                         Call call = getSinchServiceInterface().getCall(mCallId);
                         if (call != null) {
@@ -171,9 +181,14 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
             }, 3000);
         }else{
             try {
-                Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
-                mCallId = call1.getCallId();
-                endCall();
+//                Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
+//                mCallId = call1.getCallId();
+//                endCall();
+                SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+                timeWhenStopped = preferences.getLong("timeWhenStopped",0);
+                long baseTime = SystemClock.elapsedRealtime() + timeWhenStopped;
+                chronometer.setBase(baseTime);
+                chronometer.start();
                 runTimer2(30);
             }catch (Exception e){
                 e.printStackTrace();
@@ -283,6 +298,12 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
     @Override
     public void onPause() {
         super.onPause();
+        timeWhenStopped = chronometer.getBase() - SystemClock.elapsedRealtime();
+        SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong("timeWhenStopped",timeWhenStopped);
+        editor.apply();
+
         mDurationTask.cancel();
         mTimer.cancel();
         mSensorManager.unregisterListener(this);
@@ -305,8 +326,10 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
     private void endCall() {
 
         SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+        mCallId = preferences.getString("mCallId","");
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("isCallInProgress",true);
+        editor.putString("mCallId","");
         editor.apply();
 
         mAudioPlayer.stopProgressTone();
@@ -354,7 +377,13 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
             //Toast.makeText(CallScreenActivity.this, endMsg, Toast.LENGTH_LONG).show();
             stopTimer();
             try {
+                timeWhenStopped = 0;
+                SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putLong("timeWhenStopped",timeWhenStopped);
+                editor.apply();
                 chronometer.stop();
+
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -373,10 +402,10 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
             runTimer(call);
             //Toast.makeText(CallScreenActivity.this, "call attended", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Call established");
-            chronometer = findViewById(R.id.chronometer);
             callAttended = true;
             chronometer.setBase(SystemClock.elapsedRealtime());
             chronometer.start();
+
             mAudioPlayer.stopProgressTone();
             mCallState.setText(call.getState().toString());
             setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
@@ -412,36 +441,36 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
 
     }
 
-//    private void saveCallHistory(long currentTimeMillis, int duration, CallEndCause endCause) {
+    //    private void saveCallHistory(long currentTimeMillis, int duration, CallEndCause endCause) {
 //        SaveCallHistory saveCallHistory = new SaveCallHistory();
 //        saveCallHistory.Save(callerNumber,endCause.toString(),System.currentTimeMillis(),duration,callAttended,callername,"phone_call","OUT");
 //    }
-private void runTimer2(int duration) {
-    if (previousPoints >= finalcost)
-    {
-        Double TotalPoints = previousPoints-=finalcost;
-        mDatabase.child("users").child(currentUser.getUid()).child("credits").setValue(TotalPoints);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (previousPoints >= finalcost){
-                    if (duration >= 60){
-                        Double TotalPoints = previousPoints-=finalcost;
-                        mDatabase.child("users").child(currentUser.getUid()).child("credits").setValue(TotalPoints);
+    private void runTimer2(int duration) {
+        if (previousPoints >= finalcost)
+        {
+            Double TotalPoints = previousPoints-=finalcost;
+            mDatabase.child("users").child(currentUser.getUid()).child("credits").setValue(TotalPoints);
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (previousPoints >= finalcost){
+                        if (duration >= 60){
+                            Double TotalPoints = previousPoints-=finalcost;
+                            mDatabase.child("users").child(currentUser.getUid()).child("credits").setValue(TotalPoints);
+                        }
+                    }else {
+                        stopTimer();
+                        endCall();
                     }
-                }else {
-                    stopTimer();
-                    endCall();
+                    //Do something after 20 seconds
+                    handler.postDelayed(this, 1000);
                 }
-                //Do something after 20 seconds
-                handler.postDelayed(this, 1000);
-            }
-        }, 1000);
-    }else {
-        stopTimer();
-        endCall();
+            }, 1000);
+        }else {
+            stopTimer();
+            endCall();
+        }
     }
-}
     private void runTimer(Call call) {
         if (previousPoints >= finalcost)
         {
