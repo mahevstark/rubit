@@ -67,6 +67,8 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
     Double finalcost;
     Handler handler;
 
+    long timeWhenStopped = 0;
+
     private Audio mAudioPlayer;
     private Timer mTimer;
     private UpdateCallDurationTask mDurationTask;
@@ -144,6 +146,7 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
     @Override
     public void onSinchConnected() {
 
+        chronometer = findViewById(R.id.chronometer);
         if(!isCallInProgress) {
 
             new Handler().postDelayed(new Runnable() {
@@ -178,8 +181,13 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
             try {
 //                Call call1 = getSinchServiceInterface().callPhoneNumber(callerNumber);
 //                mCallId = call1.getCallId();
-                endCall();
-//                runTimer2(30);
+//                endCall();
+                SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+                timeWhenStopped = preferences.getLong("timeWhenStopped",0);
+                long baseTime = SystemClock.elapsedRealtime() + timeWhenStopped;
+                chronometer.setBase(baseTime);
+                chronometer.start();
+                runTimer2(30);
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -288,6 +296,12 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
     @Override
     public void onPause() {
         super.onPause();
+        timeWhenStopped = chronometer.getBase() - SystemClock.elapsedRealtime();
+        SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong("timeWhenStopped",timeWhenStopped);
+        editor.apply();
+
         mDurationTask.cancel();
         mTimer.cancel();
         mSensorManager.unregisterListener(this);
@@ -361,7 +375,13 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
             //Toast.makeText(CallScreenActivity.this, endMsg, Toast.LENGTH_LONG).show();
             stopTimer();
             try {
+                timeWhenStopped = 0;
+                SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putLong("timeWhenStopped",timeWhenStopped);
+                editor.apply();
                 chronometer.stop();
+
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -380,10 +400,10 @@ public class CallScreenActivity extends BaseActivity implements SensorEventListe
             runTimer(call);
             //Toast.makeText(CallScreenActivity.this, "call attended", Toast.LENGTH_SHORT).show();
             Log.d(TAG, "Call established");
-            chronometer = findViewById(R.id.chronometer);
             callAttended = true;
             chronometer.setBase(SystemClock.elapsedRealtime());
             chronometer.start();
+
             mAudioPlayer.stopProgressTone();
             mCallState.setText(call.getState().toString());
             setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
