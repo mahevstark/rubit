@@ -23,7 +23,7 @@ import net.trejj.talk.services.CallingService
 import net.trejj.talk.services.SinchService
 
 
-abstract class BaseActivity : AppCompatActivity(), Base, ServiceConnection {
+abstract class BaseActivity() : AppCompatActivity(), Base, ServiceConnection {
     override val disposables = CompositeDisposable()
     abstract fun enablePresence(): Boolean
     private var presenceUtil: PresenceUtil? = null

@@ -155,6 +155,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -381,6 +382,14 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
+        if(getIntent().hasExtra(IntentUtils.UID)){
+            Realm realm = Realm.getDefaultInstance();
+            List<Message> messages = realm.where(Message.class).equalTo(DBConstants.FROM_ID, getIntent().getStringExtra(IntentUtils.UID)).findAll();
+            for(int i=0;i< messages.size();i++){
+                updateReceivedMessages(messages.get(i).getMessageId());
+            }
+        }
 
         callInProgress = findViewById(R.id.callInProgress);
 
@@ -913,6 +922,39 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
             updateActionModeItemsCount(selectedMessages.size());
 
         });
+    }
+
+    private void updateReceivedMessages(String id) {
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("messages").child(id);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+//                    if(snapshot.child("toId").getValue().toString().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        Realm realm = Realm.getDefaultInstance();
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                Message all = realm.where(Message.class)
+                                        .equalTo(DBConstants.MESSAGE_ID, id)
+                                        .findFirst();
+                                if (all != null) {
+                                    all.setContent(snapshot.child("content").getValue().toString());
+                                }
+
+                            }
+                        });
+//                    }
+//                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
     }
 
 
@@ -2150,7 +2192,6 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         }
     }
     private void updateMessage(String text) {
-
         final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
         boolean canDeleteForEveryOne = AdapterHelper.canDeleteForEveryOne(selectedItemsForActionMode);
 

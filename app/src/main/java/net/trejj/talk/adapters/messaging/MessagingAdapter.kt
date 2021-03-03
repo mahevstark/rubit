@@ -1,6 +1,7 @@
 package net.trejj.talk.adapters.messaging
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,20 +9,26 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import ca.barrenechea.widget.recyclerview.decoration.StickyHeaderAdapter
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import io.realm.OrderedRealmCollection
+import io.realm.Realm
 import io.realm.RealmRecyclerViewAdapter
 import net.trejj.talk.R
 import net.trejj.talk.adapters.messaging.holders.*
 import net.trejj.talk.adapters.messaging.holders.base.BaseHolder
 import net.trejj.talk.adapters.messaging.holders.base.ReceivedDeletedMessageHolder
 import net.trejj.talk.model.AudibleState
+import net.trejj.talk.model.constants.DBConstants
 import net.trejj.talk.model.constants.MessageType
 import net.trejj.talk.model.realms.FireCall
 import net.trejj.talk.model.realms.Message
 import net.trejj.talk.model.realms.User
 import net.trejj.talk.utils.TimeHelper
+import net.trejj.talk.utils.network.FireManager.Companion.uid
 import java.util.*
-import kotlin.collections.indices as indices
 
 /**
  * Created by Devlomi on 07/08/2017.
@@ -96,6 +103,13 @@ class MessagingAdapter(private val messages: OrderedRealmCollection<Message>, au
 ////                type =
 //            }
 //
+//        }
+
+//        if(getIntent().hasExtra(IntentUtils.UID)){
+//        val realm = Realm.getDefaultInstance()
+//        val messages: List<Message> = realm.where(Message::class.java).equalTo(DBConstants.FROM_ID, uid).findAll()
+//        for (i in messages.indices) {
+//            updateReceivedMessages(messages[i].messageId)
 //        }
 
         when (type) {
@@ -289,4 +303,26 @@ class MessagingAdapter(private val messages: OrderedRealmCollection<Message>, au
         distinctMessagesTimestamps()
     }
 
+    private fun updateReceivedMessages(id: String) {
+        val ref = FirebaseDatabase.getInstance().reference.child("messages").child(id)
+        ref.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+//                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+//                    if(snapshot.child("toId").getValue().toString().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                val realm = Realm.getDefaultInstance()
+                realm.executeTransaction { realm ->
+                    val all = realm.where(Message::class.java)
+                            .equalTo(DBConstants.MESSAGE_ID, id)
+                            .findFirst()
+                    if (all != null) {
+                        all.content = snapshot.child("content").value.toString()
+                    }
+                }
+                //                    }
+//                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        })
+    }
 }

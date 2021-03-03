@@ -8,6 +8,7 @@ import net.trejj.talk.adapters.messaging.holders.base.BaseReceivedHolder
 import net.trejj.talk.model.realms.Message
 import net.trejj.talk.model.realms.User
 import com.vanniktech.emoji.EmojiTextView
+import java.lang.Exception
 
 // received message with type text
 class ReceivedTextHolder(context: Context, itemView: View) : BaseReceivedHolder(context,itemView) {
@@ -15,9 +16,20 @@ class ReceivedTextHolder(context: Context, itemView: View) : BaseReceivedHolder(
     private var tvMessageContent: EmojiTextView = itemView.findViewById(R.id.tv_message_content)
     private var edit_text: TextView = itemView.findViewById(R.id.edit_text)
 
+    private var isEdited:String ="false"
+
     override fun bind(message: Message,user: User) {
         super.bind(message,user)
-//        if(message.isEdited) {
+
+
+//        try {
+//            if (message.content.split(","))
+//            isEdited = message.content.split(",")[0]
+//        }catch (e: Exception){
+//            e.printStackTrace()
+//        }
+//
+//        if(isEdited == "true") {
 //            edit_text.visibility = View.VISIBLE
 //        } else{
 //            edit_text.visibility = View.GONE
