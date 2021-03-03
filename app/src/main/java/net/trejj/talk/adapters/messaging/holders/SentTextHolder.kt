@@ -2,6 +2,7 @@ package net.trejj.talk.adapters.messaging.holders
 
 import android.content.Context
 import android.view.View
+import android.widget.TextView
 import net.trejj.talk.R
 import net.trejj.talk.adapters.messaging.holders.base.BaseSentHolder
 import net.trejj.talk.model.realms.Message
@@ -13,6 +14,7 @@ import com.vanniktech.emoji.EmojiUtils
 // sent message with type text
 class SentTextHolder(context: Context, itemView: View) : BaseSentHolder(context,itemView) {
     private var tvMessageContent: EmojiTextView = itemView.findViewById(R.id.tv_message_content)
+    private var edit_text: TextView = itemView.findViewById(R.id.edit_text)
 
     override fun bind(message: Message, user: User) {
         super.bind(message,user)
@@ -27,6 +29,11 @@ class SentTextHolder(context: Context, itemView: View) : BaseSentHolder(context,
         } else {
             R.dimen.emoji_size_default
         }
+//        if(message.isEdited) {
+//            edit_text.visibility = View.VISIBLE
+//        } else{
+//            edit_text.visibility = View.GONE
+//        }
 
         tvMessageContent.setEmojiSizeRes(res, false)
         tvMessageContent.text = message.content

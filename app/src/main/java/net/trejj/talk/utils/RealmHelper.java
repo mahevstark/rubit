@@ -1054,7 +1054,6 @@ public class RealmHelper {
         realm.commitTransaction();
 
     }
-
     //set message as deleted (Delete for everyone)
     public void setMessageDeleted(String messageId) {
         RealmResults<Message> messages = getMessages(messageId);

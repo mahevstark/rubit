@@ -20,6 +20,13 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/menu_item_edit"
+        android:icon="@drawable/ic_edit_white"
+        android:title="@string/edit"
+        app:showAsAction="always" />
+
+
+    <item
         android:id="@+id/menu_item_share"
         android:icon="@drawable/ic_share"
         android:title="@string/share"

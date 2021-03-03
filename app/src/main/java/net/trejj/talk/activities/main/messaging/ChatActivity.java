@@ -86,6 +86,7 @@ import net.trejj.talk.events.UpdateGroupEvent;
 import net.trejj.talk.events.UpdateNetworkProgress;
 import net.trejj.talk.model.ExpandableContact;
 import net.trejj.talk.model.ProgressData;
+import net.trejj.talk.model.constants.DBConstants;
 import net.trejj.talk.model.constants.DownloadUploadStat;
 import net.trejj.talk.model.constants.FireCallDirection;
 import net.trejj.talk.model.constants.MessageStat;
@@ -150,11 +151,14 @@ import com.droidninja.imageeditengine.ImageEditor;
 //import com.google.android.gms.ads.AdListener;
 //import com.google.android.gms.ads.AdRequest;
 //import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.EmojiTextView;
@@ -172,6 +176,7 @@ import androidx.annotation.NonNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -180,6 +185,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.reactivex.disposables.Disposable;
 import io.realm.OrderedCollectionChangeSet;
 import io.realm.OrderedRealmCollectionChangeListener;
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 import omrecorder.AudioChunk;
@@ -192,6 +198,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static net.trejj.talk.model.constants.DownloadUploadStat.CANCELLED;
 import static net.trejj.talk.model.constants.DownloadUploadStat.FAILED;
 import static net.trejj.talk.model.constants.DownloadUploadStat.LOADING;
+import static net.trejj.talk.utils.FireConstants.messages;
 import static net.trejj.talk.utils.FireConstants.presenceRef;
 import static net.trejj.talk.utils.IntentUtils.EXTRA_CURRENT_ALBUM_POSITION;
 import static net.trejj.talk.utils.IntentUtils.EXTRA_CURRENT_MESSAGE_ID;
@@ -531,8 +538,13 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
                     showBlockedDialog();
                     return;
                 }
-                String text = etMessage.getText().toString();
-                sendMessage(text);
+                if(!isEdited) {
+                    String text = etMessage.getText().toString();
+                    sendMessage(text);
+                }else{
+                    String text = etMessage.getText().toString();
+                    updateMessage(text);
+                }
             }
         });
         recordView.setOnRecordListener(new OnRecordListener() {
@@ -906,6 +918,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
     //hide or show toolbar button in activity depending on conditions
     private void updateToolbarButtons(List<Message> selectedMessages) {
+
         if (AdapterHelper.shouldHideAllItems(selectedMessages)) {
             hideShareItem();
             hideCopyItem();
@@ -1967,6 +1980,10 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
                 searchItemClicked();
                 break;
 
+            case R.id.menu_item_edit:
+                setUpdateMessage();
+                break;
+
             case R.id.block_contact:
                 blockUserClicked();
                 break;
@@ -2123,6 +2140,78 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         shareImageIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         shareImageIntent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(shareImageIntent);
+    }
+    private boolean isEdited = false;
+    private void setUpdateMessage(){
+        final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
+        for (final Message message : selectedItemsForActionMode) {
+            isEdited = true;
+            etMessage.setText(message.getContent());
+        }
+    }
+    private void updateMessage(String text) {
+
+        final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
+        boolean canDeleteForEveryOne = AdapterHelper.canDeleteForEveryOne(selectedItemsForActionMode);
+
+        boolean containMedia = viewModel.isSelectedItemsContainMedia();
+
+        for (final Message message : selectedItemsForActionMode) {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("messages");
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("content",text);
+            map.put("isEdited",true);
+            reference.child(message.getMessageId()).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    isEdited = false;
+                    if(task.isSuccessful()){
+//                        net.trejj.talk.utils.RealmHelper.getInstance().saveObjectToRealm(message);
+                        Realm realm = Realm.getDefaultInstance();
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                Message all = realm.where(Message.class)
+                                        .equalTo(DBConstants.MESSAGE_ID, message.getMessageId())
+                                        .findFirst();
+                                all.setContent(text);
+
+                            }
+                        });
+                        etMessage.setText("");
+                        Toast.makeText(ChatActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                    }else{
+
+                        Toast.makeText(ChatActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+//            getDisposables().add(fireManager.getServerTime().subscribe(timestamp -> {
+//                        if (TimeHelper.isMessageTimePassed(timestamp, Long.parseLong(message.getTimestamp()))) {
+//                            Toast.makeText(ChatActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
+//                        } else {
+
+//                            FireConstants.getDeleteMessageRequestsRef(message.getMessageId(), user.isGroupBool(), user.isBroadcastBool(), user.getUid()).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                @Override
+//                                public void onSuccess(Void aVoid) {
+//                                    if (message.getDownloadUploadStat() == LOADING) {
+//                                        if (MessageType.isSentType(message.getType())) {
+//                                            DownloadManager.cancelUpload(message.getMessageId());
+//                                        } else
+//                                            DownloadManager.cancelDownload(message.getMessageId());
+//                                    }
+//                                    RealmHelper.getInstance().setMessageDeleted(message.getMessageId());
+//                                }
+//                            });
+//                        }
+//                    }, error -> Toast.makeText(ChatActivity.this, R.string.error, Toast.LENGTH_SHORT).show())
+//            );
+
+        }
+
+            exitActionMode();
+
+
     }
 
     private void deleteItemClicked() {

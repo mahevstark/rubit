@@ -83,6 +83,8 @@ public class Message extends RealmObject implements Parcelable, Comparable {
     //currentFontIndex'ts used to last 7 notification on APIs below API24
     private boolean isSeen;
 
+//    private boolean isEdited;
+
     @Ignore
     Status status;
 
@@ -149,6 +151,11 @@ public class Message extends RealmObject implements Parcelable, Comparable {
                 result.put("statusId", quotedMessage.getStatus().getStatusId());
             }
         }
+//        if(isEdited){
+//            result.put("isEdited",true);
+//        }else {
+//            result.put("isEdited",false);
+//        }
 
 
         //return final map
@@ -291,6 +298,18 @@ public class Message extends RealmObject implements Parcelable, Comparable {
         isBroadcast = broadcast;
     }
 
+
+//    public boolean isEdited() {
+//        return isEdited;
+//    }
+
+//    public void setEdited(boolean edited) {
+//        isEdited = edited;
+//    }
+
+    public static Creator<Message> getCREATOR() {
+        return CREATOR;
+    }
 
     @Override
     public String toString() {
