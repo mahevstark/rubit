@@ -65,7 +65,7 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
+            android:windowSoftInputMode="stateUnchanged|stateHidden" />
         <activity
             android:name=".activities.UpdateActivity"
             android:screenOrientation="portrait"
