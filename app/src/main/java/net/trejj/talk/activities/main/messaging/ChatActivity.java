@@ -59,6 +59,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.cjt2325.cameralibrary.ResultCodes;
 import com.codekidlabs.storagechooser.StorageChooser;
 import net.trejj.talk.R;
@@ -1240,7 +1241,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
     private void getUserPhoto() {
         if (!NetworkHelper.isConnected(this)) return;
         getDisposables().add(fireManager.checkAndDownloadUserThumbImg(user).subscribe(thumbImg -> {
-            Glide.with(ChatActivity.this).load(user.getThumbImg()).into(userImgToolbarChatAct);
+            Glide.with(ChatActivity.this).load(user.getThumbImg()).apply(RequestOptions.circleCropTransform()).into(userImgToolbarChatAct);
         }, throwable -> {
 
         }));
@@ -1785,7 +1786,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
     private void setUserInfoInToolbar() {
         if (user.getThumbImg() != null)
-            Glide.with(ChatActivity.this).load(user.getThumbImg()).into(userImgToolbarChatAct);
+            Glide.with(ChatActivity.this).load(user.getThumbImg()).apply(RequestOptions.circleCropTransform()).into(userImgToolbarChatAct);
         else {
             if (user.isBroadcastBool())
                 userImgToolbarChatAct.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_broadcast_with_bg));

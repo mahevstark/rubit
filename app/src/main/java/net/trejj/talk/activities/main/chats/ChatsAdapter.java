@@ -17,6 +17,8 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.request.RequestOptions;
+
 import net.trejj.talk.R;
 import net.trejj.talk.model.constants.MessageType;
 import net.trejj.talk.model.constants.TypingStat;
@@ -322,7 +324,7 @@ public class ChatsAdapter extends RealmRecyclerViewAdapter<Chat, RecyclerView.Vi
             imageView.setImageDrawable(AppCompatResources.getDrawable(context, R.drawable.ic_broadcast_with_bg));
         else if (user.getThumbImg() != null) {
 
-            GlideApp.with(context).load(user.getThumbImg()).into(imageView);
+            GlideApp.with(context).load(user.getThumbImg()).apply(RequestOptions.circleCropTransform()).into(imageView);
 
         }
 

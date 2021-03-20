@@ -82,7 +82,7 @@
 
             <TextView
                 android:id="@+id/tv_time"
-                android:layout_weight="1"
+                android:layout_weight="2"
                 android:layout_gravity="end"
                 style="@style/ReceivedMessageTimeTextStyle"
                 android:layout_width="0dp"
