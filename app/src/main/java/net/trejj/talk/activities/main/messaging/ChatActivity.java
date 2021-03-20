@@ -86,6 +86,7 @@ import net.trejj.talk.events.UpdateGroupEvent;
 import net.trejj.talk.events.UpdateNetworkProgress;
 import net.trejj.talk.model.ExpandableContact;
 import net.trejj.talk.model.ProgressData;
+import net.trejj.talk.model.constants.DBConstants;
 import net.trejj.talk.model.constants.DownloadUploadStat;
 import net.trejj.talk.model.constants.FireCallDirection;
 import net.trejj.talk.model.constants.MessageStat;
@@ -150,11 +151,14 @@ import com.droidninja.imageeditengine.ImageEditor;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.EmojiTextView;
@@ -172,6 +176,7 @@ import androidx.annotation.NonNull;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -180,6 +185,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import io.reactivex.disposables.Disposable;
 import io.realm.OrderedCollectionChangeSet;
 import io.realm.OrderedRealmCollectionChangeListener;
+import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 import omrecorder.AudioChunk;
@@ -364,7 +370,38 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
     private ChatViewModel viewModel;
     private MessageSwipeController messageSwipeController;
+    private void updateReceivedMessages(String id) {
 
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("messages").child(id);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+//                    if(snapshot.child("toId").getValue().toString().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        Message all = realm.where(Message.class)
+                                .equalTo(DBConstants.MESSAGE_ID, id)
+                                .findFirst();
+                        if (all != null) {
+                            all.setContent(snapshot.child("content").getValue().toString());
+                        }
+
+                    }
+                });
+//                    }
+//                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
     @Override
     public boolean enablePresence() {
         return true;
@@ -375,6 +412,13 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        if(getIntent().hasExtra(IntentUtils.UID)){
+            Realm realm = Realm.getDefaultInstance();
+            List<Message> messages = realm.where(Message.class).equalTo(DBConstants.FROM_ID, getIntent().getStringExtra(IntentUtils.UID)).findAll();
+            for(int i=0;i< messages.size();i++){
+                updateReceivedMessages(messages.get(i).getMessageId());
+            }
+        }
         callInProgress = findViewById(R.id.callInProgress);
 
         SharedPreferences preferences = getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE);
@@ -531,8 +575,13 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
                     showBlockedDialog();
                     return;
                 }
-                String text = etMessage.getText().toString();
-                sendMessage(text);
+                if(!isEdited) {
+                    String text = etMessage.getText().toString();
+                    sendMessage(text);
+                }else{
+                    String text = etMessage.getText().toString();
+                    updateMessage(text);
+                }
             }
         });
         recordView.setOnRecordListener(new OnRecordListener() {
@@ -1957,7 +2006,9 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
             case R.id.menu_item_share:
                 shareClicked();
                 break;
-
+            case R.id.menu_item_edit:
+                setUpdateMessage();
+                break;
 
             case R.id.menu_item_forward:
                 forwardClicked();
@@ -1991,7 +2042,55 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
         return super.onOptionsItemSelected(item);
     }
+    private boolean isEdited = false;
+    private void setUpdateMessage(){
+        final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
+        for (final Message message : selectedItemsForActionMode) {
+            isEdited = true;
+            etMessage.setText(message.getContent());
+        }
+    }
+    private void updateMessage(String text) {
 
+        final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
+
+        for (final Message message : selectedItemsForActionMode) {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("messages");
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("content",text);
+            map.put("isEdited",true);
+            reference.child(message.getMessageId()).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    isEdited = false;
+                    if(task.isSuccessful()){
+//                        net.trejj.talk.utils.RealmHelper.getInstance().saveObjectToRealm(message);
+                        Realm realm = Realm.getDefaultInstance();
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                Message all = realm.where(Message.class)
+                                        .equalTo(DBConstants.MESSAGE_ID, message.getMessageId())
+                                        .findFirst();
+                                all.setContent(text);
+
+                            }
+                        });
+                        etMessage.setText("");
+                        Toast.makeText(ChatActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                    }else{
+
+                        Toast.makeText(ChatActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+        }
+
+        exitActionMode();
+
+
+    }
     private void replyItemClicked() {
         Message selectedMessage = viewModel.getSelectedItems().get(0);
         if (selectedMessage == null) return;
