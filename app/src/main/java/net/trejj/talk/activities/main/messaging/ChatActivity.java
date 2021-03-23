@@ -6,12 +6,14 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -22,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -109,6 +112,7 @@ import net.trejj.talk.utils.AdapterHelper;
 import net.trejj.talk.utils.BitmapUtils;
 import net.trejj.talk.utils.ClipboardUtil;
 import net.trejj.talk.utils.ContactUtils;
+import net.trejj.talk.utils.CropImageRequest;
 import net.trejj.talk.utils.DirManager;
 import net.trejj.talk.utils.DownloadManager;
 import net.trejj.talk.utils.DpUtil;
@@ -162,10 +166,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.EmojiTextView;
 import com.wafflecopter.multicontactpicker.ContactResult;
 import com.wafflecopter.multicontactpicker.MultiContactPicker;
+import com.yalantis.ucrop.UCrop;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
@@ -217,6 +224,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
     public static final int PICK_CONTACT_REQUEST = 5491;
     public static final int PICK_NUMBERS_FOR_CONTACT_REQUEST = 5517;
     public static final int PICK_LOCATION_REQUEST = 7125;
+    private static final int PIC_CROP = 228;
 
     public static int MAX_FILE_SIZE = 40000;
     public static final int MAX_SELECTABLE = 9;
@@ -2352,6 +2360,25 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
     private boolean gallaryPicked = false;
 
+    private int IMAGE_COMPRESSION = 80;
+    private void cropImage(Uri sourceUri) {
+        Uri destinationUri = Uri.fromFile(new File(this.getCacheDir(), "IMG_" + System.currentTimeMillis()));
+        UCrop.Options options = new UCrop.Options();
+        options.setCompressionQuality(IMAGE_COMPRESSION);
+        options.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+//        options.setActiveWidgetColor(ContextCompat.getColor(this, R.color.colorPrimary));
+
+//        if (lockAspectRatio)
+//            options.withAspectRatio(ASPECT_RATIO_X, ASPECT_RATIO_Y);
+
+//        if (setBitmapMaxWidthHeight)
+//            options.withMaxResultSize(bitmapMaxWidth, bitmapMaxHeight);
+
+        UCrop.of(sourceUri, destinationUri)
+                .withOptions(options)
+                .start(this);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -2397,7 +2424,6 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
             }else{
                 sendImage(imagePath, true);
             }
-
         } else if (requestCode == CAMERA_REQUEST && resultCode != ResultCodes.CAMERA_ERROR_STATE) {
 
             if (resultCode == ResultCodes.IMAGE_CAPTURE_SUCCESS) {

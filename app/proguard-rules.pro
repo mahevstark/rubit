@@ -67,3 +67,8 @@
 
 #Places Picker
 -keep public class com.devlomi.placespicker.model.*
+
+-dontwarn com.yalantis.ucrop**
+-keep class com.yalantis.ucrop** { *; }
+-keep interface com.yalantis.ucrop** { *; }
+
