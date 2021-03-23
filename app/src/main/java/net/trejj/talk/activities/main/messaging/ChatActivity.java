@@ -153,9 +153,10 @@ import com.devlomi.record_view.OnRecordClickListener;
 import com.devlomi.record_view.OnRecordListener;
 import com.devlomi.record_view.RecordView;
 import com.droidninja.imageeditengine.ImageEditor;
-//import com.google.android.gms.ads.AdListener;
-//import com.google.android.gms.ads.AdRequest;
-//import com.google.android.gms.ads.InterstitialAd;
+
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -381,7 +382,38 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
     private ChatViewModel viewModel;
     private MessageSwipeController messageSwipeController;
+    private void updateReceivedMessages(String id) {
 
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("messages").child(id);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+//                    if(snapshot.child("toId").getValue().toString().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                Realm realm = Realm.getDefaultInstance();
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        Message all = realm.where(Message.class)
+                                .equalTo(DBConstants.MESSAGE_ID, id)
+                                .findFirst();
+                        if (all != null) {
+                            all.setContent(snapshot.child("content").getValue().toString());
+                        }
+
+                    }
+                });
+//                    }
+//                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
     @Override
     public boolean enablePresence() {
         return true;
@@ -905,7 +937,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
 
         if (getResources().getBoolean(R.bool.is_interstitial_ad_enabled))
-//            loadInterstitialAd();
+            loadInterstitialAd();
 
 
         btnCancelImage.setOnClickListener(new View.OnClickListener() {
@@ -1057,18 +1089,18 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         return isGroup && user.getGroup() != null && user.getGroup().getUsers() != null;
     }
 
-//    private void loadInterstitialAd() {
-//        final InterstitialAd interstitialAd = new InterstitialAd(this);
-//        interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_id));
-//        interstitialAd.loadAd(new AdRequest.Builder().build());
-//        interstitialAd.setAdListener(new AdListener() {
-//            @Override
-//            public void onAdLoaded() {
-//                super.onAdLoaded();
-//                interstitialAd.show();
-//            }
-//        });
-//    }
+    private void loadInterstitialAd() {
+        final InterstitialAd interstitialAd = new InterstitialAd(this);
+        interstitialAd.setAdUnitId(getString(R.string.interstitial_ad_id));
+        interstitialAd.loadAd(new AdRequest.Builder().build());
+        interstitialAd.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                interstitialAd.show();
+            }
+        });
+    }
 
     @Override
     protected void onResume() {
@@ -2021,7 +2053,9 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
             case R.id.menu_item_share:
                 shareClicked();
                 break;
-
+            case R.id.menu_item_edit:
+                setUpdateMessage();
+                break;
 
             case R.id.menu_item_forward:
                 forwardClicked();
@@ -2059,7 +2093,55 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
         return super.onOptionsItemSelected(item);
     }
+    private boolean isEdited = false;
+    private void setUpdateMessage(){
+        final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
+        for (final Message message : selectedItemsForActionMode) {
+            isEdited = true;
+            etMessage.setText(message.getContent());
+        }
+    }
+    private void updateMessage(String text) {
 
+        final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
+
+        for (final Message message : selectedItemsForActionMode) {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("messages");
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("content",text);
+            map.put("isEdited",true);
+            reference.child(message.getMessageId()).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    isEdited = false;
+                    if(task.isSuccessful()){
+//                        net.trejj.talk.utils.RealmHelper.getInstance().saveObjectToRealm(message);
+                        Realm realm = Realm.getDefaultInstance();
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                Message all = realm.where(Message.class)
+                                        .equalTo(DBConstants.MESSAGE_ID, message.getMessageId())
+                                        .findFirst();
+                                all.setContent(text);
+
+                            }
+                        });
+                        etMessage.setText("");
+                        Toast.makeText(ChatActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                    }else{
+
+                        Toast.makeText(ChatActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+        }
+
+        exitActionMode();
+
+
+    }
     private void replyItemClicked() {
         Message selectedMessage = viewModel.getSelectedItems().get(0);
         if (selectedMessage == null) return;

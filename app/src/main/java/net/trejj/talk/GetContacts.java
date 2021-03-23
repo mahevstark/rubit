@@ -63,7 +63,6 @@ public class GetContacts extends AsyncTask<Void, Void, List> {
                             }else {
                                 displayNumber = ISOPrefix + displayNumber;
                             }
-
                         ContactInfo contactInfo = new ContactInfo();
                         contactInfo.setName(displayName);
                         contactInfo.setNumber(displayNumber);
