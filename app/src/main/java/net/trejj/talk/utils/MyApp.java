@@ -20,7 +20,7 @@ import net.trejj.talk.job.FireJobCreator;
 import net.trejj.talk.utils.MyMigration;
 import net.trejj.talk.utils.SharedPreferencesManager;
 import com.evernote.android.job.JobManager;
-//import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.MobileAds;
 import com.vanniktech.emoji.EmojiManager;
 import com.vanniktech.emoji.ios.IosEmojiProvider;
 
@@ -146,7 +146,7 @@ public class MyApp extends Application implements Application.ActivityLifecycleC
 
         //initialize ads for faster loading in first time
         if (getResources().getBoolean(R.bool.are_ads_enabled))
-//            MobileAds.initialize(this);
+            MobileAds.initialize(this);
 
 
         registerActivityLifecycleCallbacks(this);

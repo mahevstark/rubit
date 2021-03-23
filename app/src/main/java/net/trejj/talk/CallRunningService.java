@@ -40,13 +40,11 @@ public class CallRunningService extends Service {
         Intent notificationIntent = new Intent(this, CallScreenActivity.class)
                 .putExtra("callername",callername).putExtra("number",number)
                 .putExtra("isCallInProgress",true);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
-                |Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,
                 0, notificationIntent, 0);
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle("Trejj Talk")
-                .setContentText("Tap to return")
+                .setContentText("Call in progress")
                 .setSmallIcon(R.drawable.ic_call)
                 .setContentIntent(pendingIntent)
                 .build();

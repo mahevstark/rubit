@@ -26,9 +26,9 @@ import net.trejj.talk.model.realms.User;
 import net.trejj.talk.utils.ContactUtils;
 import net.trejj.talk.utils.IntentUtils;
 import net.trejj.talk.utils.RealmHelper;
-//import com.google.android.gms.ads.AdListener;
-//import com.google.android.gms.ads.AdRequest;
-//import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.realm.RealmResults;
@@ -44,7 +44,7 @@ public class NewChatActivity extends BaseActivity implements UsersAdapter.OnItem
     private LinearLayout recyclerContainer;
     private TextView tvNoContacts;
     private Button btnInvite;
-//    AdView adView;
+    AdView adView;
 
 
     @Override
@@ -78,24 +78,24 @@ public class NewChatActivity extends BaseActivity implements UsersAdapter.OnItem
         });
     }
 
-//    private void loadAd() {
-//        adView.setAdListener(new AdListener() {
-//            @Override
-//            public void onAdFailedToLoad(int i) {
-//                super.onAdFailedToLoad(i);
-//                adView.setVisibility(View.GONE);
-//            }
-//
-//            @Override
-//            public void onAdLoaded() {
-//                super.onAdLoaded();
-//                adView.setVisibility(View.VISIBLE);
-//            }
-//        });
-//
-//        if (getResources().getBoolean(R.bool.is_new_chat_ad_enabled))
-//            adView.loadAd(new AdRequest.Builder().build());
-//    }
+    private void loadAd() {
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                adView.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                adView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        if (getResources().getBoolean(R.bool.is_new_chat_ad_enabled))
+            adView.loadAd(new AdRequest.Builder().build());
+    }
 
     private void syncContacts() {
         progressBar.setVisibility(View.VISIBLE);
@@ -113,7 +113,7 @@ public class NewChatActivity extends BaseActivity implements UsersAdapter.OnItem
         rvNewChat = findViewById(R.id.rv_new_chat);
         toolbar = findViewById(R.id.toolbar);
         progressBar = findViewById(R.id.progress_bar_sync);
-//        adView = findViewById(R.id.ad_view);
+        adView = findViewById(R.id.ad_view);
         refreshContactsBtn = findViewById(R.id.refresh_contacts_btn);
         noContactsLayout = findViewById(R.id.no_contacts_container);
         recyclerContainer = findViewById(R.id.recycler_container);
