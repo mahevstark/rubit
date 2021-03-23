@@ -31,6 +31,10 @@ import net.trejj.talk.utils.SharedPreferencesManager;
 import net.trejj.talk.utils.TimeHelper;
 import net.trejj.talk.utils.network.FireManager;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.greenrobot.eventbus.EventBus;
 import androidx.annotation.NonNull;
@@ -540,6 +544,9 @@ public class RealmHelper {
 
     //get received messages that are not read to update them in Firebase database as read
     public RealmResults<Message> getUnReadIncomingMessages(String chatId) {
+//        if(getIntent().hasExtra(IntentUtils.UID)){
+
+//        }
         return realm.where(Message.class)
                 .equalTo(DBConstants.CHAT_ID, chatId)
                 .notEqualTo(DBConstants.FROM_ID, FireManager.getUid())
@@ -1054,7 +1061,6 @@ public class RealmHelper {
         realm.commitTransaction();
 
     }
-
     //set message as deleted (Delete for everyone)
     public void setMessageDeleted(String messageId) {
         RealmResults<Message> messages = getMessages(messageId);

@@ -402,7 +402,8 @@ class FragmentChats : BaseFragment(), GroupTypingListener, ActionMode.Callback, 
                     val user = it.user
                     val intent = Intent(context, ChatActivity::class.java)
                     intent.putExtra(IntentUtils.UID, user.uid)
-                    startActivity(intent);
+                    Log.i("iddddddddd",user.uid)
+                    startActivity(intent)
                 }
             }
 

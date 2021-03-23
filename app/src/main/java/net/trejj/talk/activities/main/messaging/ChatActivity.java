@@ -6,12 +6,14 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -22,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.provider.OpenableColumns;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -59,6 +62,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.cjt2325.cameralibrary.ResultCodes;
 import com.codekidlabs.storagechooser.StorageChooser;
 import net.trejj.talk.R;
@@ -108,6 +112,7 @@ import net.trejj.talk.utils.AdapterHelper;
 import net.trejj.talk.utils.BitmapUtils;
 import net.trejj.talk.utils.ClipboardUtil;
 import net.trejj.talk.utils.ContactUtils;
+import net.trejj.talk.utils.CropImageRequest;
 import net.trejj.talk.utils.DirManager;
 import net.trejj.talk.utils.DownloadManager;
 import net.trejj.talk.utils.DpUtil;
@@ -148,6 +153,7 @@ import com.devlomi.record_view.OnRecordClickListener;
 import com.devlomi.record_view.OnRecordListener;
 import com.devlomi.record_view.RecordView;
 import com.droidninja.imageeditengine.ImageEditor;
+
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
@@ -155,15 +161,19 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.EmojiTextView;
 import com.wafflecopter.multicontactpicker.ContactResult;
 import com.wafflecopter.multicontactpicker.MultiContactPicker;
+import com.yalantis.ucrop.UCrop;
 import com.zhihu.matisse.Matisse;
 import com.zhihu.matisse.MimeType;
 import com.zhihu.matisse.engine.impl.GlideEngine;
@@ -198,6 +208,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static net.trejj.talk.model.constants.DownloadUploadStat.CANCELLED;
 import static net.trejj.talk.model.constants.DownloadUploadStat.FAILED;
 import static net.trejj.talk.model.constants.DownloadUploadStat.LOADING;
+import static net.trejj.talk.utils.FireConstants.messages;
 import static net.trejj.talk.utils.FireConstants.presenceRef;
 import static net.trejj.talk.utils.IntentUtils.EXTRA_CURRENT_ALBUM_POSITION;
 import static net.trejj.talk.utils.IntentUtils.EXTRA_CURRENT_MESSAGE_ID;
@@ -214,6 +225,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
     public static final int PICK_CONTACT_REQUEST = 5491;
     public static final int PICK_NUMBERS_FOR_CONTACT_REQUEST = 5517;
     public static final int PICK_LOCATION_REQUEST = 7125;
+    private static final int PIC_CROP = 228;
 
     public static int MAX_FILE_SIZE = 40000;
     public static final int MAX_SELECTABLE = 9;
@@ -419,6 +431,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
                 updateReceivedMessages(messages.get(i).getMessageId());
             }
         }
+
         callInProgress = findViewById(R.id.callInProgress);
 
         SharedPreferences preferences = getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE);
@@ -952,9 +965,43 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         });
     }
 
+    private void updateReceivedMessages(String id) {
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("messages").child(id);
+        ref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for(DataSnapshot dataSnapshot:snapshot.getChildren()){
+//                    if(snapshot.child("toId").getValue().toString().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                        Realm realm = Realm.getDefaultInstance();
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                Message all = realm.where(Message.class)
+                                        .equalTo(DBConstants.MESSAGE_ID, id)
+                                        .findFirst();
+                                if (all != null) {
+                                    all.setContent(snapshot.child("content").getValue().toString());
+                                }
+
+                            }
+                        });
+//                    }
+//                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+
 
     //hide or show toolbar button in activity depending on conditions
     private void updateToolbarButtons(List<Message> selectedMessages) {
+
         if (AdapterHelper.shouldHideAllItems(selectedMessages)) {
             hideShareItem();
             hideCopyItem();
@@ -1234,7 +1281,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
     private void getUserPhoto() {
         if (!NetworkHelper.isConnected(this)) return;
         getDisposables().add(fireManager.checkAndDownloadUserThumbImg(user).subscribe(thumbImg -> {
-            Glide.with(ChatActivity.this).load(user.getThumbImg()).into(userImgToolbarChatAct);
+            Glide.with(ChatActivity.this).load(user.getThumbImg()).apply(RequestOptions.circleCropTransform()).into(userImgToolbarChatAct);
         }, throwable -> {
 
         }));
@@ -1779,7 +1826,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
     private void setUserInfoInToolbar() {
         if (user.getThumbImg() != null)
-            Glide.with(ChatActivity.this).load(user.getThumbImg()).into(userImgToolbarChatAct);
+            Glide.with(ChatActivity.this).load(user.getThumbImg()).apply(RequestOptions.circleCropTransform()).into(userImgToolbarChatAct);
         else {
             if (user.isBroadcastBool())
                 userImgToolbarChatAct.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.ic_broadcast_with_bg));
@@ -2018,6 +2065,10 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
                 searchItemClicked();
                 break;
 
+            case R.id.menu_item_edit:
+                setUpdateMessage();
+                break;
+
             case R.id.block_contact:
                 blockUserClicked();
                 break;
@@ -2223,6 +2274,77 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         shareImageIntent.setFlags(FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(shareImageIntent);
     }
+    private boolean isEdited = false;
+    private void setUpdateMessage(){
+        final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
+        for (final Message message : selectedItemsForActionMode) {
+            isEdited = true;
+            etMessage.setText(message.getContent());
+        }
+    }
+    private void updateMessage(String text) {
+        final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
+        boolean canDeleteForEveryOne = AdapterHelper.canDeleteForEveryOne(selectedItemsForActionMode);
+
+        boolean containMedia = viewModel.isSelectedItemsContainMedia();
+
+        for (final Message message : selectedItemsForActionMode) {
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("messages");
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("content",text);
+            map.put("isEdited",true);
+            reference.child(message.getMessageId()).updateChildren(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    isEdited = false;
+                    if(task.isSuccessful()){
+//                        net.trejj.talk.utils.RealmHelper.getInstance().saveObjectToRealm(message);
+                        Realm realm = Realm.getDefaultInstance();
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                Message all = realm.where(Message.class)
+                                        .equalTo(DBConstants.MESSAGE_ID, message.getMessageId())
+                                        .findFirst();
+                                all.setContent(text);
+
+                            }
+                        });
+                        etMessage.setText("");
+                        Toast.makeText(ChatActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                    }else{
+
+                        Toast.makeText(ChatActivity.this, "Updated", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+//            getDisposables().add(fireManager.getServerTime().subscribe(timestamp -> {
+//                        if (TimeHelper.isMessageTimePassed(timestamp, Long.parseLong(message.getTimestamp()))) {
+//                            Toast.makeText(ChatActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
+//                        } else {
+
+//                            FireConstants.getDeleteMessageRequestsRef(message.getMessageId(), user.isGroupBool(), user.isBroadcastBool(), user.getUid()).setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                @Override
+//                                public void onSuccess(Void aVoid) {
+//                                    if (message.getDownloadUploadStat() == LOADING) {
+//                                        if (MessageType.isSentType(message.getType())) {
+//                                            DownloadManager.cancelUpload(message.getMessageId());
+//                                        } else
+//                                            DownloadManager.cancelDownload(message.getMessageId());
+//                                    }
+//                                    RealmHelper.getInstance().setMessageDeleted(message.getMessageId());
+//                                }
+//                            });
+//                        }
+//                    }, error -> Toast.makeText(ChatActivity.this, R.string.error, Toast.LENGTH_SHORT).show())
+//            );
+
+        }
+
+            exitActionMode();
+
+
+    }
 
     private void deleteItemClicked() {
 
@@ -2320,6 +2442,25 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
     private boolean gallaryPicked = false;
 
+    private int IMAGE_COMPRESSION = 80;
+    private void cropImage(Uri sourceUri) {
+        Uri destinationUri = Uri.fromFile(new File(this.getCacheDir(), "IMG_" + System.currentTimeMillis()));
+        UCrop.Options options = new UCrop.Options();
+        options.setCompressionQuality(IMAGE_COMPRESSION);
+        options.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+//        options.setActiveWidgetColor(ContextCompat.getColor(this, R.color.colorPrimary));
+
+//        if (lockAspectRatio)
+//            options.withAspectRatio(ASPECT_RATIO_X, ASPECT_RATIO_Y);
+
+//        if (setBitmapMaxWidthHeight)
+//            options.withMaxResultSize(bitmapMaxWidth, bitmapMaxHeight);
+
+        UCrop.of(sourceUri, destinationUri)
+                .withOptions(options)
+                .start(this);
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -2365,7 +2506,6 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
             }else{
                 sendImage(imagePath, true);
             }
-
         } else if (requestCode == CAMERA_REQUEST && resultCode != ResultCodes.CAMERA_ERROR_STATE) {
 
             if (resultCode == ResultCodes.IMAGE_CAPTURE_SUCCESS) {
