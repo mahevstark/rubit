@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -136,7 +137,6 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
 
                 when (position) {
 
-
                     //add margin to fab when tab is changed only if ads are shown
                     //animate fab with rotation animation also
                     1 -> {
@@ -144,7 +144,6 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
                             val baseFragment = fragment as BaseFragment
                             addMarginToFab(baseFragment.isVisible && baseFragment.isAdShowing)
                         }
-
                         animateFab(R.drawable.ic_chat)
                     }
                     2 -> {
@@ -424,6 +423,7 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
         menuInflater.inflate(R.menu.menu_main, menu)
         val menuItem = menu.findItem(R.id.search_item)
         searchView = menuItem.actionView as SearchView
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
 
@@ -667,6 +667,7 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
         lateinit var fab: FloatingActionButton
         lateinit var textStatusFab: FloatingActionButton
         lateinit var searchView: SearchView
+
         @JvmField
         var isCallEnabled: Boolean = true
         const val CAMERA_REQUEST = 9514
