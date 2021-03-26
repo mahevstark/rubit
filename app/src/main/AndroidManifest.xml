@@ -51,7 +51,11 @@
             android:name=".CallRunningService"
             android:enabled="true"
             android:exported="true"></service>
-
+        <receiver android:name=".receivers.OnBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" /> <!-- ACTIVITIES -->

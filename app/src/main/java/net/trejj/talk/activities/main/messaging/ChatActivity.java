@@ -519,6 +519,13 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
             getChat();
         }
 
+        String recUid = preferences.getString("receiverUid","");
+        if(!recUid.isEmpty()) {
+            if (receiverUid.equals(recUid)) {
+                etMessage.setText(preferences.getString("etMessage", ""));
+            }
+        }
+
         isGroup = user.isGroupBool();
         isBroadcast = user.isBroadcastBool();
 
@@ -1096,6 +1103,12 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
     @Override
     protected void onPause() {
+        SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("etMessage",etMessage.getText().toString());
+        editor.putString("receiverUid",receiverUid);
+        editor.apply();
+
         //check if audio is played before
         if (!oldIdAudioPlayer.equals("")) {
             //stop audio when app is not in foreground
@@ -2386,7 +2399,9 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
             if (resultCode == ResultCodes.IMAGE_CAPTURE_SUCCESS) {
                 String path = data.getStringExtra(IntentUtils.EXTRA_PATH_RESULT);
-                ImageEditorRequest.open(this, path);
+                Uri mUri = Uri.fromFile(new File(path));
+                CropImage.activity(mUri)
+                        .start(this);
 
             } else if (resultCode == ResultCodes.VIDEO_RECORD_SUCCESS) {
                 String path = data.getStringExtra(IntentUtils.EXTRA_PATH_RESULT);
@@ -2508,6 +2523,12 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         Message message = new MessageCreator.Builder(user, MessageType.SENT_TEXT).quotedMessage(getQuotedMessage()).text(text).build();
         ServiceHelper.startNetworkRequest(this, message.getMessageId(), message.getChatId());
         etMessage.setText("");
+        SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("etMessage","");
+        editor.putString("receiverUid","");
+        editor.apply();
+
         hideReplyLayout();
     }
 
