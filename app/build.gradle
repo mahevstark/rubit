@@ -13,8 +13,8 @@ android {
         applicationId "net.trejj.talk"
         minSdkVersion 17
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 8
+        versionName "1.0.7"
         multiDexEnabled true
 
         vectorDrawables.useSupportLibrary = true
@@ -42,10 +42,10 @@ android {
         resValue 'string', "foursquare_client_secret", ""
 
         //AdMob Ads Units IDs
-        resValue 'string', "banner_unit_id_new_chat", "ca-app-pub-3940256099942544/6300978111"
-        resValue 'string', "banner_unit_id_main", "ca-app-pub-3940256099942544/6300978111"
-        resValue 'string', "interstitial_ad_id", "ca-app-pub-3940256099942544/1033173712"
-        resValue 'string', "admob_app_id", "ca-app-pub-3940256099942544~3347511713"
+        resValue 'string', "banner_unit_id_new_chat", "ca-app-pub-2818856964974442/2826644554"
+        resValue 'string', "banner_unit_id_main", "ca-app-pub-2818856964974442/6572332343"
+        resValue 'string', "interstitial_ad_id", "ca-app-pub-2818856964974442/3647334843"
+        resValue 'string', "admob_app_id", "ca-app-pub-2818856964974442~8076985700"
 
         //AdMob Ads Enable/Disable
         resValue 'bool', "are_ads_enabled", "true"
