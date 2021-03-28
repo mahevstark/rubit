@@ -4,12 +4,10 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -39,7 +37,6 @@ import com.google.firebase.database.ValueEventListener
 import io.reactivex.disposables.CompositeDisposable
 import io.realm.OrderedRealmCollectionChangeListener
 import io.realm.RealmResults
-import net.trejj.talk.activities.main.MainActivity
 import kotlin.collections.ArrayList
 
 class FragmentChats : BaseFragment(), GroupTypingListener, ActionMode.Callback, ChatsAdapter.ChatsAdapterCallback {
@@ -56,8 +53,6 @@ class FragmentChats : BaseFragment(), GroupTypingListener, ActionMode.Callback, 
     override var adView: AdView? = null
     private var callback: FragmentCallback? = null
     private var actionMenu: Menu? = null
-
-    lateinit var searchView: SearchView
 
     private val mainViewModel: MainViewModel by activityViewModels()
     private val viewModel: ChatsFragmentViewModel by activityViewModels()
@@ -131,7 +126,6 @@ class FragmentChats : BaseFragment(), GroupTypingListener, ActionMode.Callback, 
         return view
     }
 
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         callback = context as? FragmentCallback
@@ -139,7 +133,6 @@ class FragmentChats : BaseFragment(), GroupTypingListener, ActionMode.Callback, 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         fireListener = FireListener()
         chatList = RealmHelper.getInstance().allChats
         setTheAdapter()
@@ -151,21 +144,6 @@ class FragmentChats : BaseFragment(), GroupTypingListener, ActionMode.Callback, 
 
         mainViewModel.queryTextChange.observe(viewLifecycleOwner, androidx.lifecycle.Observer { text ->
             onQueryTextChange(text)
-        })
-
-    }
-
-    private fun textChangeLisener() {
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-
-                adapter?.filter(newText)
-                return true
-            }
         })
 
     }
@@ -375,12 +353,6 @@ class FragmentChats : BaseFragment(), GroupTypingListener, ActionMode.Callback, 
 
     override fun onResume() {
         super.onResume()
-
-        Handler().postDelayed({
-            this.searchView = MainActivity.searchView
-            textChangeLisener()
-        }, 2000)
-
         addTypingStatListener()
         addVoiceMessageStatListener()
         addMessageStatListener()

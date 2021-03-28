@@ -4,35 +4,23 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.widget.SearchView
+import android.widget.*
+
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
+
 import androidx.recyclerview.widget.LinearLayoutManager
+
 import com.bumptech.glide.Glide
 import com.cjt2325.cameralibrary.ResultCodes
 import com.devlomi.circularstatusview.CircularStatusView
-import com.droidninja.imageeditengine.ImageEditor
-import com.google.android.gms.ads.AdView
-import com.theartofdev.edmodo.cropper.CropImage
-import com.zhihu.matisse.Matisse
-import io.reactivex.rxkotlin.addTo
-import io.realm.RealmResults
-import kotlinx.android.synthetic.main.fragment_status.*
 import net.trejj.talk.R
 import net.trejj.talk.activities.MyStatusActivity
 import net.trejj.talk.activities.ViewStatusActivity
-import net.trejj.talk.activities.main.MainActivity
 import net.trejj.talk.activities.main.MainActivity.Companion.CAMERA_REQUEST
 import net.trejj.talk.activities.main.MainActivity.Companion.REQUEST_CODE_TEXT_STATUS
 import net.trejj.talk.activities.main.MainViewModel
@@ -41,16 +29,21 @@ import net.trejj.talk.activities.main.status.StatusFragmentEvent.StatusInsertedE
 import net.trejj.talk.adapters.StatusAdapter
 import net.trejj.talk.fragments.BaseFragment
 import net.trejj.talk.interfaces.StatusFragmentCallbacks
+import net.trejj.talk.model.realms.TextStatus
 import net.trejj.talk.model.constants.MessageType
 import net.trejj.talk.model.constants.StatusType
-import net.trejj.talk.model.realms.TextStatus
 import net.trejj.talk.model.realms.UserStatuses
 import net.trejj.talk.utils.*
 import net.trejj.talk.utils.network.FireManager
 import net.trejj.talk.utils.network.StatusManager
 import net.trejj.talk.views.HeaderViewDecoration
 import net.trejj.talk.views.TextViewWithShapeBackground
-import java.io.File
+import com.droidninja.imageeditengine.ImageEditor
+import com.google.android.gms.ads.AdView
+import com.zhihu.matisse.Matisse
+import io.reactivex.rxkotlin.addTo
+import io.realm.RealmResults
+import kotlinx.android.synthetic.main.fragment_status.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -130,7 +123,6 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
         }
 
         viewModel.statusLiveData.observe(viewLifecycleOwner, androidx.lifecycle.Observer { statusFragmentEvent ->
-
             when (statusFragmentEvent) {
                 is StatusInsertedEvent -> statusInserted()
                 is OnActivityResultEvent -> {
@@ -138,14 +130,9 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
                     val resultCode = statusFragmentEvent.resultCode
                     val data = statusFragmentEvent.data
 
-                    if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                        val result = CropImage.getActivityResult(data)
-                        val resultUri = result.uri
-                        Log.i("resultUri", resultUri.path!!)
-                        ImageEditorRequest.open(activity, resultUri.path.toString())
-                    }
                     if (requestCode == CAMERA_REQUEST) {
-                        onCameraActivityResult(resultCode, data, requestCode)
+                        onCameraActivityResult(resultCode, data)
+
 
                     } else if (requestCode == ImageEditor.RC_IMAGE_EDITOR && resultCode == Activity.RESULT_OK) {
                         data?.getStringExtra(ImageEditor.EXTRA_EDITED_PATH)?.let { imagePath ->
@@ -160,7 +147,6 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
                     }
                 }
             }
-
         })
 
         viewModel.queryTextChange.observe(viewLifecycleOwner, androidx.lifecycle.Observer { newText ->
@@ -204,19 +190,11 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
     }
 
 
-    fun onCameraActivityResult(resultCode: Int, data: Intent, requestCode: Int) {
-
+    fun onCameraActivityResult(resultCode: Int, data: Intent) {
         if (resultCode != ResultCodes.CAMERA_ERROR_STATE) {
             if (resultCode == ResultCodes.IMAGE_CAPTURE_SUCCESS) {
                 val path = data.getStringExtra(IntentUtils.EXTRA_PATH_RESULT)
-                val mUri = Uri.fromFile(File(path))
-//                activity?.let {
-//                    CropImage.activity(mUri)
-//                            .start(it)
-//                }
-                val intent: Intent? = context?.let { CropImage.activity(mUri).getIntent(it) }
-                startActivityForResult(intent, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
-//                ImageEditorRequest.open(activity, path)
+                ImageEditorRequest.open(activity, path)
             } else if (resultCode == ResultCodes.VIDEO_RECORD_SUCCESS) {
                 data.getStringExtra(IntentUtils.EXTRA_PATH_RESULT)?.let { path ->
                     uploadVideoStatus(path)
@@ -331,12 +309,6 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-
-
-            Handler().postDelayed({
-                this.searchView = MainActivity.searchView
-                textChangeLisener()
-            }, 2000)
         updateHeaders()
         setMyStatus()
         //fetch status when user swipes to this page
@@ -359,22 +331,7 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
             e.printStackTrace()
         }
     }
-    lateinit var searchView: SearchView
 
-    private fun textChangeLisener() {
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-
-                adapter?.filter(newText)
-                return true
-            }
-        })
-
-    }
     override fun onQueryTextChange(newText: String?) {
         super.onQueryTextChange(newText)
         if (adapter != null) {
@@ -426,13 +383,6 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            val result = CropImage.getActivityResult(data)
-            val resultUri = result.uri
-            Log.i("resultUri", resultUri.path!!)
-            ImageEditorRequest.open(activity, resultUri.path.toString())
-        }
-    }
+
+
 }

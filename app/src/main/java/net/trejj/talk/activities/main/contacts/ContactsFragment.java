@@ -94,15 +94,6 @@ public class ContactsFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                searchView = MainActivity.searchView;
-
-                textChangeLisener();
-            }
-        },2000);
         fab.setVisibility(View.GONE);
         textStatusFab.setVisibility(View.GONE);
     }
@@ -213,6 +204,14 @@ public class ContactsFragment extends BaseFragment implements View.OnClickListen
                 return true;
             }
         });
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                searchView = MainActivity.searchView;
+
+                textChangeLisener();
+            }
+        },2000);
 
         select_country.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -321,29 +320,24 @@ public class ContactsFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
-//    @Override
-//    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-//        super.onCreateOptionsMenu(menu, inflater);
-//        inflater = getActivity().getMenuInflater();
-//        inflater.inflate(R.menu.menu_main, menu);
-//    }
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+    }
     SearchView searchView;
 
-//    @Override
-//    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-//
-//        return super.onOptionsItemSelected(item);
-//    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onQueryTextChange(@Nullable String newText) {
         super.onQueryTextChange(newText);
-//        TextChanged(newText);
-    }
-
-    @Override
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        return super.onContextItemSelected(item);
+//        TextChanged();
     }
 
     private void textChangeLisener() {
@@ -384,7 +378,6 @@ public class ContactsFragment extends BaseFragment implements View.OnClickListen
             }
         });
     }
-
 
 
     @Override

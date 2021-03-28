@@ -1,23 +1,14 @@
 package net.trejj.talk.activities.main.calls
 
 import android.content.Context
+import android.content.res.Resources
 import android.os.Bundle
-import android.os.Handler
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.*
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.devlomi.hidely.hidelyviews.HidelyImageView
-import com.google.android.gms.ads.AdView
-import io.realm.RealmResults
-import kotlinx.android.synthetic.main.fragment_calls.*
-import net.trejj.talk.Function
 import net.trejj.talk.R
-import net.trejj.talk.activities.main.MainActivity
 import net.trejj.talk.activities.main.MainViewModel
 import net.trejj.talk.adapters.CallsAdapter
 import net.trejj.talk.fragments.BaseFragment
@@ -26,6 +17,10 @@ import net.trejj.talk.model.realms.FireCall
 import net.trejj.talk.utils.PerformCall
 import net.trejj.talk.utils.RealmHelper
 import net.trejj.talk.utils.network.FireManager
+import com.devlomi.hidely.hidelyviews.HidelyImageView
+import com.google.android.gms.ads.AdView
+import io.realm.RealmResults
+import kotlinx.android.synthetic.main.fragment_calls.*
 import java.util.*
 
 class CallsFragment : BaseFragment(), ActionMode.Callback, CallsAdapter.OnClickListener {
@@ -37,8 +32,6 @@ class CallsFragment : BaseFragment(), ActionMode.Callback, CallsAdapter.OnClickL
     var listener: FragmentCallback? = null
     var actionMode: ActionMode? = null
     val fireManager = FireManager()
-
-    lateinit var searchView: SearchView
 
     val viewModel: MainViewModel by activityViewModels()
     override fun showAds(): Boolean {
@@ -72,29 +65,6 @@ class CallsFragment : BaseFragment(), ActionMode.Callback, CallsAdapter.OnClickL
         viewModel.queryTextChange.observe(viewLifecycleOwner, androidx.lifecycle.Observer { newText ->
             onQueryTextChange(newText)
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        Handler().postDelayed({
-            this.searchView = MainActivity.searchView
-            textChangeLisener()
-        }, 2000)
-    }
-    private fun textChangeLisener() {
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-
-                adapter?.filter(newText)
-                return true
-            }
-        })
-
     }
 
     private fun initAdapter() {
@@ -174,6 +144,7 @@ class CallsFragment : BaseFragment(), ActionMode.Callback, CallsAdapter.OnClickL
     override fun onQueryTextChange(newText: String?) {
         super.onQueryTextChange(newText)
 
+            adapter?.filter(newText)
 
     }
 

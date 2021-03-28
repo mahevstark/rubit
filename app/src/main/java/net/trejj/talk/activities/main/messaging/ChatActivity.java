@@ -160,7 +160,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.theartofdev.edmodo.cropper.CropImage;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.EmojiTextView;
 import com.wafflecopter.multicontactpicker.ContactResult;
@@ -413,6 +412,13 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        if(getIntent().hasExtra(IntentUtils.UID)){
+            Realm realm = Realm.getDefaultInstance();
+            List<Message> messages = realm.where(Message.class).equalTo(DBConstants.FROM_ID, getIntent().getStringExtra(IntentUtils.UID)).findAll();
+            for(int i=0;i< messages.size();i++){
+                updateReceivedMessages(messages.get(i).getMessageId());
+            }
+        }
         callInProgress = findViewById(R.id.callInProgress);
 
         SharedPreferences preferences = getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE);
@@ -1627,13 +1633,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
 
     private void setAdapter() {
-        if(getIntent().hasExtra(IntentUtils.UID)){
-            Realm realm = Realm.getDefaultInstance();
-            List<Message> messages = realm.where(Message.class).equalTo(DBConstants.FROM_ID, getIntent().getStringExtra(IntentUtils.UID)).findAll();
-            for(int i=0;i< messages.size();i++){
-                updateReceivedMessages(messages.get(i).getMessageId());
-            }
-        }
+
         adapter = new MessagingAdapter(messageList, true, this, this,
                 user, SharedPreferencesManager.getThumbImg(),
                 viewModel.getItemSelectedLiveData(), viewModel.getProgressMapLiveData(),
@@ -2009,9 +2009,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
             case R.id.menu_item_edit:
                 setUpdateMessage();
                 break;
-            case R.id.menu_item_star:
-                starMessage();
-                break;
+
             case R.id.menu_item_forward:
                 forwardClicked();
                 break;
@@ -2320,21 +2318,12 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
     }
 
-    public void starMessage(){
-
-    }
-
     private boolean gallaryPicked = false;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            Uri resultUri = result.getUri();
-            Log.i("resultUri",resultUri.getPath());
-            ImageEditorRequest.open(this, resultUri.getPath().toString());
-        }
+
         if (requestCode == PICK_GALLERY_REQUEST && resultCode == RESULT_OK) {
             List<String> mPaths = Matisse.obtainPathResult(data);
             String paths = Matisse.obtainPathResult(data).toString().substring(1,Matisse.obtainPathResult(data).toString().length()-1);
@@ -2356,14 +2345,9 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
             } else {
                 String path = data.getStringExtra(IntentUtils.EXTRA_PATH_RESULT);
-//                ImageEditorRequest.open(this, paths);
+                ImageEditorRequest.open(this, paths);
 //                sendImage(mPaths);
-//                for(int i=0;)
-                Uri mUri = Uri.fromFile(new File(paths));
-                CropImage.activity(mUri)
-                        .start(this);
             }
-
         } else if (requestCode == PICK_MUSIC_REQUEST && resultCode == RESULT_OK) {
 
             Uri uri = data.getData();
