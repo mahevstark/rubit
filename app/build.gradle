@@ -42,21 +42,6 @@ android {
         resValue 'string', "foursquare_client_secret", ""
 
         //AdMob Ads Units IDs
-
-        resValue 'string', "banner_unit_id_new_chat", "ca-app-pub-2818856964974442/2826644554"
-        resValue 'string', "banner_unit_id_main", "ca-app-pub-2818856964974442/6572332343"
-        resValue 'string', "banner_unit_id_new_chat", "ca-app-pub-2818856964974442/6572332343"
-        resValue 'string', "banner_unit_id_main", "ca-app-pub-2818856964974442/2826644554"
-
-        resValue 'string', "banner_unit_id_new_chat", "ca-app-pub-2818856964974442/6572332343"
-        resValue 'string', "banner_unit_id_main", "ca-app-pub-2818856964974442/2826644554"
-
-        resValue 'string', "banner_unit_id_new_chat", "ca-app-pub-2818856964974442/6572332343"
-        resValue 'string', "banner_unit_id_main", "ca-app-pub-2818856964974442/2826644554"
-
-        resValue 'string', "banner_unit_id_new_chat", "ca-app-pub-2818856964974442/6572332343"
-        resValue 'string', "banner_unit_id_main", "ca-app-pub-2818856964974442/2826644554"
-
         resValue 'string', "banner_unit_id_new_chat", "ca-app-pub-2818856964974442/6572332343"
         resValue 'string', "banner_unit_id_main", "ca-app-pub-2818856964974442/2826644554"
         resValue 'string', "interstitial_ad_id", "ca-app-pub-2818856964974442/3647334843"
