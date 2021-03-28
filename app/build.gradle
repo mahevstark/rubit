@@ -44,8 +44,13 @@ android {
         //AdMob Ads Units IDs
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         resValue 'string', "banner_unit_id_new_chat", "ca-app-pub-2818856964974442/2826644554"
         resValue 'string', "banner_unit_id_main", "ca-app-pub-2818856964974442/6572332343"
+=======
+        resValue 'string', "banner_unit_id_new_chat", "ca-app-pub-2818856964974442/6572332343"
+        resValue 'string', "banner_unit_id_main", "ca-app-pub-2818856964974442/2826644554"
+>>>>>>> parent of ff86a9b... Commit
 =======
         resValue 'string', "banner_unit_id_new_chat", "ca-app-pub-2818856964974442/6572332343"
         resValue 'string', "banner_unit_id_main", "ca-app-pub-2818856964974442/2826644554"
