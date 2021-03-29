@@ -21,8 +21,8 @@ class ReceivedFileHolder(context: Context, itemView: View) : BaseReceivedHolder(
     private val tvFileExtension: TextView
     private val tvFileSize: TextView
 
-    override fun bind(message: Message, user: User) {
-        super.bind(message, user)
+    override fun bind(message: Message, user: User, starMessage: ArrayList<String>) {
+        super.bind(message, user,starMessage)
         //get file extension
         val fileExtension = Util.getFileExtensionFromPath(message.metadata).toUpperCase()
         tvFileExtension.text = fileExtension

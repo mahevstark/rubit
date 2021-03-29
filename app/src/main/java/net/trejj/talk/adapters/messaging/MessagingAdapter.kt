@@ -18,9 +18,11 @@ import net.trejj.talk.model.AudibleState
 import net.trejj.talk.model.constants.MessageType
 import net.trejj.talk.model.realms.FireCall
 import net.trejj.talk.model.realms.Message
+import net.trejj.talk.model.realms.StarMessage
 import net.trejj.talk.model.realms.User
 import net.trejj.talk.utils.TimeHelper
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.indices as indices
 
 /**
@@ -39,10 +41,16 @@ class MessagingAdapter(private val messages: OrderedRealmCollection<Message>, au
     private val interaction = context as? Interaction?
     private val contactHolderInteraction = context as? ContactHolderInteraction?
     private val audibleHolderInteraction = context as? AudibleInteraction?
+    private var starMessages: ArrayList<String> = ArrayList();
 
     //timestamps to implement the date header
     var timestamps = HashMap<Int, Long>()
     var lastTimestampPos = 0
+
+    fun setStarMessages(starMessages: ArrayList<String>){
+        this.starMessages = starMessages
+        notifyDataSetChanged()
+    }
 
 
     //date header
@@ -102,97 +110,97 @@ class MessagingAdapter(private val messages: OrderedRealmCollection<Message>, au
             MessageType.SENT_TEXT -> {
                 val sentTextHolder = mHolder as SentTextHolder
                 initHolder(sentTextHolder)
-                sentTextHolder.bind(message, user)
+                sentTextHolder.bind(message, user,starMessages)
             }
             MessageType.SENT_IMAGE -> {
                 val sentImageHolder = mHolder as SentImageHolder
                 initHolder(sentImageHolder)
-                sentImageHolder.bind(message, user)
+                sentImageHolder.bind(message, user,starMessages)
             }
             MessageType.SENT_VOICE_MESSAGE -> {
                 val sentVoiceMessageHolder = mHolder as SentVoiceMessageHolder
                 initHolder(sentVoiceMessageHolder)
                 initAudibleHolder(sentVoiceMessageHolder)
-                sentVoiceMessageHolder.bind(message, user)
+                sentVoiceMessageHolder.bind(message, user,starMessages)
             }
             MessageType.SENT_VIDEO -> {
                 val sentVideoMessageHolder = mHolder as SentVideoMessageHolder
                 initHolder(sentVideoMessageHolder)
-                sentVideoMessageHolder.bind(message, user)
+                sentVideoMessageHolder.bind(message, user,starMessages)
             }
             MessageType.SENT_FILE -> {
                 val sentFileHolder = mHolder as SentFileHolder
                 initHolder(sentFileHolder)
-                sentFileHolder.bind(message, user)
+                sentFileHolder.bind(message, user,starMessages)
             }
             MessageType.SENT_AUDIO -> {
                 val sentAudioHolder = mHolder as SentAudioHolder
                 initHolder(sentAudioHolder)
                 initAudibleHolder(sentAudioHolder)
-                sentAudioHolder.bind(message, user)
+                sentAudioHolder.bind(message, user,starMessages)
             }
             MessageType.SENT_CONTACT -> {
                 val sentContactHolder = mHolder as SentContactHolder
                 initHolder(sentContactHolder)
                 initContactHolder(sentContactHolder)
-                sentContactHolder.bind(message, user)
+                sentContactHolder.bind(message, user,starMessages)
             }
 
             MessageType.SENT_LOCATION -> {
                 val sentLocationHolder = mHolder as SentLocationHolder
                 initHolder(sentLocationHolder)
-                sentLocationHolder.bind(message, user)
+                sentLocationHolder.bind(message, user,starMessages)
             }
             MessageType.RECEIVED_TEXT -> {
                 val holder = mHolder as ReceivedTextHolder
                 initHolder(holder)
-                holder.bind(message, user)
+                holder.bind(message, user,starMessages)
             }
             MessageType.RECEIVED_IMAGE -> {
                 val receivedImageHolder = mHolder as ReceivedImageHolder
                 initHolder(receivedImageHolder)
-                receivedImageHolder.bind(message, user)
+                receivedImageHolder.bind(message, user,starMessages)
             }
             MessageType.RECEIVED_VOICE_MESSAGE -> {
                 val receivedVoiceMessageHolder = mHolder as ReceivedVoiceMessageHolder
                 initHolder(receivedVoiceMessageHolder)
                 initAudibleHolder(receivedVoiceMessageHolder)
-                receivedVoiceMessageHolder.bind(message, user)
+                receivedVoiceMessageHolder.bind(message, user,starMessages)
             }
             MessageType.RECEIVED_VIDEO -> {
                 val receivedVideoMessageHolder = mHolder as ReceivedVideoMessageHolder
                 initHolder(receivedVideoMessageHolder)
-                receivedVideoMessageHolder.bind(message, user)
+                receivedVideoMessageHolder.bind(message, user,starMessages)
             }
             MessageType.RECEIVED_FILE -> {
                 val receivedFileHolder = mHolder as ReceivedFileHolder
                 initHolder(receivedFileHolder)
-                receivedFileHolder.bind(message, user)
+                receivedFileHolder.bind(message, user,starMessages)
             }
             MessageType.RECEIVED_AUDIO -> {
                 val receivedAudioHolder = mHolder as ReceivedAudioHolder
                 initHolder(receivedAudioHolder)
                 initAudibleHolder(receivedAudioHolder)
-                receivedAudioHolder.bind(message, user)
+                receivedAudioHolder.bind(message, user,starMessages)
             }
             MessageType.RECEIVED_CONTACT -> {
                 val receivedContactHolder = mHolder as ReceivedContactHolder
                 initHolder(receivedContactHolder)
                 initContactHolder(receivedContactHolder)
-                receivedContactHolder.bind(message, user)
+                receivedContactHolder.bind(message, user,starMessages)
             }
             MessageType.RECEIVED_LOCATION -> {
                 val receivedLocationHolder = mHolder as ReceivedLocationHolder
                 initHolder(receivedLocationHolder)
-                receivedLocationHolder.bind(message, user)
+                receivedLocationHolder.bind(message, user,starMessages)
             }
             MessageType.SENT_DELETED_MESSAGE -> {
                 val sentDeletedMessageHolder = mHolder as SentDeletedMessageHolder
-                sentDeletedMessageHolder.bind(message, user)
+                sentDeletedMessageHolder.bind(message, user,starMessages)
             }
             MessageType.RECEIVED_DELETED_MESSAGE -> {
                 val receivedDeletedMessageHolder = mHolder as ReceivedDeletedMessageHolder
-                receivedDeletedMessageHolder.bind(message, user)
+                receivedDeletedMessageHolder.bind(message, user,starMessages)
             }
             MessageType.GROUP_EVENT -> {
                 val groupEventHolder = mHolder as GroupEventHolder
@@ -200,7 +208,7 @@ class MessagingAdapter(private val messages: OrderedRealmCollection<Message>, au
             }
             else -> {
                 val notSupportedTypeHolder = mHolder as? NotSupportedTypeHolder
-                notSupportedTypeHolder?.bind(message,user)
+                notSupportedTypeHolder?.bind(message,user,starMessages)
             }
         }
     }

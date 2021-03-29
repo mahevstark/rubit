@@ -3,8 +3,10 @@ package net.trejj.talk.activities.main.calls
 import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
+import android.os.Handler
 import android.view.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +23,7 @@ import com.devlomi.hidely.hidelyviews.HidelyImageView
 import com.google.android.gms.ads.AdView
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_calls.*
+import net.trejj.talk.activities.main.MainActivity
 import java.util.*
 
 class CallsFragment : BaseFragment(), ActionMode.Callback, CallsAdapter.OnClickListener {
@@ -32,10 +35,34 @@ class CallsFragment : BaseFragment(), ActionMode.Callback, CallsAdapter.OnClickL
     var listener: FragmentCallback? = null
     var actionMode: ActionMode? = null
     val fireManager = FireManager()
+    lateinit var searchView: SearchView
+
 
     val viewModel: MainViewModel by activityViewModels()
     override fun showAds(): Boolean {
         return resources.getBoolean(R.bool.is_calls_ad_enabled)
+    }
+    override fun onResume() {
+        super.onResume()
+
+        Handler().postDelayed({
+            this.searchView = MainActivity.searchView
+            textChangeLisener()
+        }, 2000)
+    }
+    private fun textChangeLisener() {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+
+                adapter?.filter(newText)
+                return true
+            }
+        })
+
     }
 
     override fun onAttach(context: Context) {

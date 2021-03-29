@@ -21,9 +21,17 @@ import java.io.File
 class SentImageHolder(context: Context, itemView: View) : BaseSentHolder(context, itemView) {
 
     var imgMsg: ImageView = itemView.findViewById(R.id.img_msg)
+    var etMessage: TextView = itemView.findViewById(R.id.tv_message_content)
+//    String newPath =
 
-    override fun bind(message: Message, user: User) {
-        super.bind(message, user)
+    override fun bind(message: Message, user: User, starMessage: ArrayList<String>) {
+        super.bind(message, user, starMessage)
+
+        if(message.content!=null) {
+            if (message.content.contains("\n")) {
+                etMessage.text = message.content.split("\n")[1]
+            }
+        }
         //if the image is not downloaded show thumb img
         if (message.localPath == null) {
             try {

@@ -35,10 +35,23 @@ public class ImageEditActivity extends BaseImageEditActivity
 
   @Override public void onDoneClicked(String imagePath) {
 
-    Intent intent = new Intent();
-    intent.putExtra(ImageEditor.EXTRA_EDITED_PATH, imagePath);
-    setResult(Activity.RESULT_OK, intent);
-    finish();
+    if(imagePath.contains("\n")){
+      String newPath = imagePath.split("\n")[0];
+      String etMessage = imagePath.split("\n")[1];
+
+      Intent intent = new Intent();
+      intent.putExtra(ImageEditor.EXTRA_EDITED_PATH, newPath);
+      intent.putExtra("etMessage",etMessage);
+      setResult(Activity.RESULT_OK, intent);
+      finish();
+
+    }else {
+
+      Intent intent = new Intent();
+      intent.putExtra(ImageEditor.EXTRA_EDITED_PATH, imagePath);
+      setResult(Activity.RESULT_OK, intent);
+      finish();
+    }
   }
 
   @Override public void onImageCropped(Bitmap bitmap, Rect cropRect) {

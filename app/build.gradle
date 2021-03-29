@@ -192,10 +192,6 @@ dependencies {
 
     implementation 'com.skyfishjy.ripplebackground:library:1.0.1'
 
-
-    kapt 'com.github.bumptech.glide:compiler:4.11.0'
-
-
     //paystack
     implementation 'co.paystack.android.design.widget:pinpad:1.0.1'
     implementation 'co.paystack.android:paystack:3.1.2'

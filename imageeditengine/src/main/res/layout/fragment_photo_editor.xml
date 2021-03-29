@@ -121,7 +121,7 @@
       android:id="@+id/filter_label"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_above="@+id/filter_list_layout"
+      android:layout_above="@+id/etMessage"
       android:layout_centerHorizontal="true"
       android:drawableTop="@drawable/ic_arrow_up"
       android:shadowColor="@color/blackish"
@@ -131,6 +131,20 @@
       android:text="Filters"
       android:textColor="@color/white"
       />
+  <EditText
+      android:paddingStart="10dp"
+      android:paddingEnd="10dp"
+      android:maxLines="3"
+      android:text="Enter here"
+      android:backgroundTint="@android:color/white"
+      android:textColor="@color/white"
+      android:id="@+id/etMessage"
+      android:visibility="gone"
+      android:layout_above="@id/filter_list_layout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingRight="5dp"
+      android:paddingLeft="10dp" />
 
   <com.google.android.material.floatingactionbutton.FloatingActionButton
       android:id="@+id/done_btn"

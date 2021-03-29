@@ -91,6 +91,7 @@ public class MessageCreator {
 
         final Message message = new Message();
         final String pushKey = net.trejj.talk.utils.FireConstants.messages.push().getKey();
+
         int type = MessageType.SENT_IMAGE;
         String receiverUid = user.getUid();
 

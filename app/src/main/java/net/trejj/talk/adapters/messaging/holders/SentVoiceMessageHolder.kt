@@ -36,8 +36,8 @@ class SentVoiceMessageHolder(context: Context, itemView: View, private val myThu
     override var audibleInteraction: AudibleInteraction? = null
 
 
-    override fun bind(message: Message, user: User) {
-        super.bind(message, user)
+    override fun bind(message: Message, user: User, starMessage: ArrayList<String>) {
+        super.bind(message, user,starMessage)
         //set initial values
         seekBar.progress = 0
         playBtn.setImageResource(AdapterHelper.getPlayIcon(false))

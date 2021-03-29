@@ -463,7 +463,6 @@
     <string name="could_not_add_fingerprint">Could not add Fingerprint</string>
 
 
-
     <string name="initiating">INITIATING</string>
     <string name="waiting_for_answer">WAITING FOR ANSWER</string>
     <string name="failed">FAILED</string>
@@ -498,6 +497,7 @@
     <string name="buycredit">Buy Credit</string>
     <string name="minute_ago">minute</string>
     <string name="hour_ago">hour</string>
+    <string name="starred_msg">Starred Messages</string>
 
 
     <string-array name="DialingCountryCode">

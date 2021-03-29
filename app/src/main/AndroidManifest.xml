@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="net.trejj.talk">
-
     <!-- PERMISSIONS -->
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
@@ -47,10 +46,18 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme"
         tools:replace="android:supportsRtl,android:allowBackup">
+        <activity android:name=".activities.StarMessagesActivity"></activity>
+
         <service
             android:name=".CallRunningService"
             android:enabled="true"
             android:exported="true"></service>
+
+        <receiver android:name=".receivers.OnBootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <uses-library
             android:name="org.apache.http.legacy"

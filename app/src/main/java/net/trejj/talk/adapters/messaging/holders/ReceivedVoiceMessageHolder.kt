@@ -36,8 +36,8 @@ class ReceivedVoiceMessageHolder(context: Context, itemView: View) : BaseReceive
     override var audibleInteraction: AudibleInteraction? = null
 
 
-    override fun bind(message: Message, user: User) {
-        super.bind(message,user)
+    override fun bind(message: Message, user: User, starMessage: ArrayList<String>) {
+        super.bind(message,user, starMessage)
 
 
         //set initial values

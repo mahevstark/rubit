@@ -476,6 +476,12 @@ class MainActivity : BaseActivity(), FabRotationAnimation.RotateAnimationListene
                 startActivity(intent)
             }
 
+
+            R.id.starMsg -> {
+                val intent = Intent(this@MainActivity, StarMessagesActivity::class.java)
+                startActivity(intent)
+            }
+
             R.id.new_broadcast_item -> {
                 val intent = Intent(this@MainActivity, NewGroupActivity::class.java)
                 intent.putExtra(IntentUtils.IS_BROADCAST, true)

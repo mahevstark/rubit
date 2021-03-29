@@ -4,10 +4,14 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import android.widget.*
 
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -40,10 +44,13 @@ import net.trejj.talk.views.HeaderViewDecoration
 import net.trejj.talk.views.TextViewWithShapeBackground
 import com.droidninja.imageeditengine.ImageEditor
 import com.google.android.gms.ads.AdView
+import com.theartofdev.edmodo.cropper.CropImage
 import com.zhihu.matisse.Matisse
 import io.reactivex.rxkotlin.addTo
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.fragment_status.*
+import net.trejj.talk.activities.main.MainActivity
+import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -82,7 +89,15 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
         callbacks = context as StatusFragmentCallbacks
 
     }
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            val result = CropImage.getActivityResult(data)
+            val resultUri = result.uri
+            Log.i("resultUri", resultUri.path!!)
+            ImageEditorRequest.open(activity, resultUri.path.toString())
+        }
+    }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_status, container, false)
@@ -130,8 +145,15 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
                     val resultCode = statusFragmentEvent.resultCode
                     val data = statusFragmentEvent.data
 
+                    if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                        val result = CropImage.getActivityResult(data)
+                        val resultUri = result.uri
+                        Log.i("resultUri", resultUri.path!!)
+                        ImageEditorRequest.open(activity, resultUri.path.toString())
+                    }
+
                     if (requestCode == CAMERA_REQUEST) {
-                        onCameraActivityResult(resultCode, data)
+                        onCameraActivityResult(resultCode, data, requestCode)
 
 
                     } else if (requestCode == ImageEditor.RC_IMAGE_EDITOR && resultCode == Activity.RESULT_OK) {
@@ -190,11 +212,18 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
     }
 
 
-    fun onCameraActivityResult(resultCode: Int, data: Intent) {
+    fun onCameraActivityResult(resultCode: Int, data: Intent, requestCode: Int) {
         if (resultCode != ResultCodes.CAMERA_ERROR_STATE) {
             if (resultCode == ResultCodes.IMAGE_CAPTURE_SUCCESS) {
                 val path = data.getStringExtra(IntentUtils.EXTRA_PATH_RESULT)
-                ImageEditorRequest.open(activity, path)
+//                ImageEditorRequest.open(activity, path)
+                val mUri = Uri.fromFile(File(path))
+//                activity?.let {
+//                    CropImage.activity(mUri)
+//                            .start(it)
+//                }
+                val intent: Intent? = context?.let { CropImage.activity(mUri).getIntent(it) }
+                startActivityForResult(intent, CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE);
             } else if (resultCode == ResultCodes.VIDEO_RECORD_SUCCESS) {
                 data.getStringExtra(IntentUtils.EXTRA_PATH_RESULT)?.let { path ->
                     uploadVideoStatus(path)
@@ -306,9 +335,28 @@ class StatusFragment : BaseFragment(), StatusAdapter.OnClickListener {
             }
         }.addTo(disposables)
     }
+    lateinit var searchView: SearchView
 
+    private fun textChangeLisener() {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+
+                adapter?.filter(newText)
+                return true
+            }
+        })
+
+    }
     override fun onResume() {
         super.onResume()
+        Handler().postDelayed({
+            this.searchView = MainActivity.searchView
+            textChangeLisener()
+        }, 2000)
         updateHeaders()
         setMyStatus()
         //fetch status when user swipes to this page

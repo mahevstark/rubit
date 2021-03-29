@@ -14,8 +14,8 @@ open class BaseReceivedHolder(context: Context, itemView: View) : BaseHolder(con
 
 
 
-    override fun bind(message: Message, user: User) {
-        super.bind(message, user)
+    override fun bind(message: Message, user: User, starMessage: ArrayList<String>) {
+        super.bind(message, user,starMessage)
 
         if (user.isGroupBool && userName != null) {
             userName?.visibility = View.VISIBLE

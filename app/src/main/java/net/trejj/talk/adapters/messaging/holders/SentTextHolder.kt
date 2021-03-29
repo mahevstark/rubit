@@ -8,14 +8,15 @@ import net.trejj.talk.model.realms.Message
 import net.trejj.talk.model.realms.User
 import com.vanniktech.emoji.EmojiTextView
 import com.vanniktech.emoji.EmojiUtils
+import net.trejj.talk.model.realms.StarMessage
 
 
 // sent message with type text
 class SentTextHolder(context: Context, itemView: View) : BaseSentHolder(context,itemView) {
     private var tvMessageContent: EmojiTextView = itemView.findViewById(R.id.tv_message_content)
 
-    override fun bind(message: Message, user: User) {
-        super.bind(message,user)
+    override fun bind(message: Message, user: User, starMessage: ArrayList<String>) {
+        super.bind(message,user,starMessage)
 
         val emojiInformation = EmojiUtils.emojiInformation(message.content)
         val res: Int

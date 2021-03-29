@@ -17,18 +17,13 @@ import net.trejj.talk.model.realms.Group;
 import net.trejj.talk.model.realms.JobId;
 import net.trejj.talk.model.realms.Message;
 import net.trejj.talk.model.realms.PendingGroupJob;
+import net.trejj.talk.model.realms.StarMessage;
 import net.trejj.talk.model.realms.Status;
 import net.trejj.talk.model.realms.StatusSeenBy;
 import net.trejj.talk.model.realms.UnUpdatedStat;
 import net.trejj.talk.model.realms.UnUpdatedVoiceMessageStat;
 import net.trejj.talk.model.realms.User;
 import net.trejj.talk.model.realms.UserStatuses;
-import net.trejj.talk.utils.ContactUtils;
-import net.trejj.talk.utils.FileUtils;
-import net.trejj.talk.utils.ListUtil;
-import net.trejj.talk.utils.NotificationHelper;
-import net.trejj.talk.utils.SharedPreferencesManager;
-import net.trejj.talk.utils.TimeHelper;
 import net.trejj.talk.utils.network.FireManager;
 import com.google.firebase.database.DataSnapshot;
 
@@ -1513,6 +1508,7 @@ public class RealmHelper {
     public void refresh() {
         realm.refresh();
     }
+
 
     public CurrentUserInfo getCurrentUserInfo() {
         return realm.where(CurrentUserInfo.class).findFirst();

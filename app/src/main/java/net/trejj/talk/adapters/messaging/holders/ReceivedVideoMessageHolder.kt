@@ -21,8 +21,8 @@ class ReceivedVideoMessageHolder(context: Context, itemView: View) : BaseReceive
 
     private val tvMediaDuration: TextView = itemView.findViewById(R.id.tv_media_duration)
 
-    override fun bind(message: Message, user: User) {
-        super.bind(message, user)
+    override fun bind(message: Message, user: User, starMessage: ArrayList<String>) {
+        super.bind(message, user,starMessage)
 
 
         //set duration

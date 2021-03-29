@@ -16,6 +16,8 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.recyclerview.widget.RecyclerView;
 import net.trejj.talk.Function;
 import net.trejj.talk.R;
@@ -39,6 +41,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.MyViewHo
     private List<User> usersList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
+
         public TextView name, phone, invite;
         RelativeLayout itemclick;
         CircleImageView image;

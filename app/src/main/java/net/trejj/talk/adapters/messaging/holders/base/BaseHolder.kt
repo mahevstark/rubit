@@ -53,8 +53,12 @@ open class BaseHolder(val context: Context, itemView: View) : RecyclerView.ViewH
     var progressMap: LiveData<Map<String, Int>>? = null
 
     var selectedItems: LiveData<List<Message>>? = null
-    open fun bind(message: Message, user: User) {
+    open fun bind(message: Message, user: User, starMessage: ArrayList<String>) {
 
+        if(starMessage.contains(message.messageId)){
+            tvTime?.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_star,0,
+                    0,0)
+        }
 
         tvTime?.text = message.time
         tvSize?.text = message.metadata

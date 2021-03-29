@@ -13,6 +13,7 @@ import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -63,6 +64,7 @@ public class PhotoEditorFragment extends BaseFragment
     RecyclerView filterRecylerview;
     View filterLayout;
     View filterLabel;
+    EditText etMessage;
     FloatingActionButton doneBtn;
     private Bitmap mainBitmap;
     private LruCache<Integer, Bitmap> cacheStack;
@@ -179,6 +181,7 @@ public class PhotoEditorFragment extends BaseFragment
     protected void initView(View view) {
         mainImageView = view.findViewById(R.id.image_iv);
         cropButton = view.findViewById(R.id.crop_btn);
+        etMessage = view.findViewById(R.id.etMessage);
         stickerButton = view.findViewById(R.id.stickers_btn);
         addTextButton = view.findViewById(R.id.add_text_btn);
         deleteButton = view.findViewById(R.id.delete_view);
@@ -365,7 +368,8 @@ public class PhotoEditorFragment extends BaseFragment
                                     new TaskCallback<String>() {
                                         @Override
                                         public void onTaskDone(String data) {
-                                            mListener.onDoneClicked(data);
+                                            String newString = data+"\n"+etMessage.getText().toString();
+                                            mListener.onDoneClicked(newString);
                                         }
                                     }).execute();
                         }
@@ -376,7 +380,8 @@ public class PhotoEditorFragment extends BaseFragment
                         new TaskCallback<String>() {
                             @Override
                             public void onTaskDone(String data) {
-                                mListener.onDoneClicked(data);
+                                String newString = data+"\n"+etMessage.getText().toString();
+                                mListener.onDoneClicked(newString);
                             }
                         }).execute();
             }

@@ -98,6 +98,7 @@ import net.trejj.talk.model.realms.Message;
 import net.trejj.talk.model.realms.PhoneNumber;
 import net.trejj.talk.model.realms.QuotedMessage;
 import net.trejj.talk.model.realms.RealmContact;
+import net.trejj.talk.model.realms.StarMessage;
 import net.trejj.talk.model.realms.Status;
 import net.trejj.talk.model.realms.User;
 import net.trejj.talk.placespicker.Place;
@@ -155,11 +156,13 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.theartofdev.edmodo.cropper.CropImage;
 import com.vanniktech.emoji.EmojiPopup;
 import com.vanniktech.emoji.EmojiTextView;
 import com.wafflecopter.multicontactpicker.ContactResult;
@@ -179,6 +182,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import ca.barrenechea.widget.recyclerview.decoration.StickyHeaderDecoration;
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -412,13 +416,6 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        if(getIntent().hasExtra(IntentUtils.UID)){
-            Realm realm = Realm.getDefaultInstance();
-            List<Message> messages = realm.where(Message.class).equalTo(DBConstants.FROM_ID, getIntent().getStringExtra(IntentUtils.UID)).findAll();
-            for(int i=0;i< messages.size();i++){
-                updateReceivedMessages(messages.get(i).getMessageId());
-            }
-        }
         callInProgress = findViewById(R.id.callInProgress);
 
         SharedPreferences preferences = getSharedPreferences("net.trejj.talk", Context.MODE_PRIVATE);
@@ -451,6 +448,8 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         setBackgroundImage();
         setSupportActionBar(toolbar);
 
+        getStarMessages();
+
         viewModel = new ViewModelProvider(this).get(ChatViewModel.class);
         fireManager = new FireManager();
         //if user share something from external app to this app
@@ -481,11 +480,11 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
                     if (getIntent().hasExtra(IntentUtils.EXTRA_REAL_PATH_LIST)) {
                         ArrayList<? extends String> imagesList = getIntent().getParcelableArrayListExtra(IntentUtils.EXTRA_REAL_PATH_LIST);
                         for (String path : imagesList) {
-                            sendImage(path, false);
+                            sendImage(path, false,"");
                         }
                         //one image
                     } else {
-                        sendImage(filePath, false);
+                        sendImage(filePath, false,"");
                     }
                     break;
 
@@ -525,6 +524,12 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
             getChat();
         }
 
+        String recUid = preferences.getString("receiverUid","");
+        if(!recUid.isEmpty()) {
+            if (receiverUid.equals(recUid)) {
+                etMessage.setText(preferences.getString("etMessage", ""));
+            }
+        }
         isGroup = user.isGroupBool();
         isBroadcast = user.isBroadcastBool();
 
@@ -658,7 +663,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
                 File file = File.createTempFile("temp", ".gif");
                 boolean b = FileUtils.writeToFileFromContentUri(getContentResolver(), file, contentUri);
                 if (b)
-                    sendImage(file.getPath(), false);
+                    sendImage(file.getPath(), false,"");
                 else {
                     Toast.makeText(ChatActivity.this, R.string.error, Toast.LENGTH_SHORT).show();
                 }
@@ -1102,6 +1107,11 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
     @Override
     protected void onPause() {
+        SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("etMessage",etMessage.getText().toString());
+        editor.putString("receiverUid",receiverUid);
+        editor.apply();
         //check if audio is played before
         if (!oldIdAudioPlayer.equals("")) {
             //stop audio when app is not in foreground
@@ -1633,7 +1643,13 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
 
     private void setAdapter() {
-
+        if(getIntent().hasExtra(IntentUtils.UID)){
+            Realm realm = Realm.getDefaultInstance();
+            List<Message> messages = realm.where(Message.class).equalTo(DBConstants.FROM_ID, getIntent().getStringExtra(IntentUtils.UID)).findAll();
+            for(int i=0;i< messages.size();i++){
+                updateReceivedMessages(messages.get(i).getMessageId());
+            }
+        }
         adapter = new MessagingAdapter(messageList, true, this, this,
                 user, SharedPreferencesManager.getThumbImg(),
                 viewModel.getItemSelectedLiveData(), viewModel.getProgressMapLiveData(),
@@ -1968,6 +1984,16 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+
+        final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
+        for (final Message message : selectedItemsForActionMode) {
+            if(starMessages.contains(message.getMessageId())){
+                if(id==R.id.starMsg){
+                    item.setIcon(R.drawable.ic_star);
+                }
+            }
+        }
+
         switch (id) {
             case android.R.id.home:
                 onBackPressed();
@@ -2010,6 +2036,16 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
                 setUpdateMessage();
                 break;
 
+            case R.id.menu_item_star:
+                for (final Message message : selectedItemsForActionMode) {
+                    if (starMessages.contains(message.getMessageId())){
+                        unStarMessage(message.getMessageId());
+                    }else{
+
+                        starMessage();
+                    }
+                }
+                break;
             case R.id.menu_item_forward:
                 forwardClicked();
                 break;
@@ -2042,6 +2078,14 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void unStarMessage(String id) {
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("starMessages");
+
+        reference.child(id).removeValue();
+    }
+
     private boolean isEdited = false;
     private void setUpdateMessage(){
         final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
@@ -2309,12 +2353,54 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
 
                     exitActionMode();
-
+                    Toast.makeText(ChatActivity.this, "Hello", Toast.LENGTH_SHORT).show();
                 }
             });
             deleteDialog.show();
         }
 
+
+    }
+    private ArrayList<String> starMessages;
+    public void getStarMessages(){
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("starMessages");
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                starMessages = new ArrayList<>();
+                for(DataSnapshot dataSnapshot: snapshot.getChildren()){
+                    starMessages.add(dataSnapshot.child("messageId").getValue().toString());
+                }
+                adapter.setStarMessages(starMessages);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    public void starMessage(){
+
+        final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
+        for (final Message message : selectedItemsForActionMode) {
+
+            DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("users")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("starMessages");
+
+            String uid = UUID.randomUUID().toString();
+            HashMap<String,Object> map = new HashMap<>();
+            map.put("uid",uid);
+            map.put("messageId",message.getMessageId());
+
+            reference.child(uid).setValue(map);
+
+            exitActionMode();
+        }
 
     }
 
@@ -2323,7 +2409,12 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            Uri resultUri = result.getUri();
+            Log.i("resultUri",resultUri.getPath());
+            ImageEditorRequest.open(this, resultUri.getPath().toString());
+        }
         if (requestCode == PICK_GALLERY_REQUEST && resultCode == RESULT_OK) {
             List<String> mPaths = Matisse.obtainPathResult(data);
             String paths = Matisse.obtainPathResult(data).toString().substring(1,Matisse.obtainPathResult(data).toString().length()-1);
@@ -2345,8 +2436,11 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
             } else {
                 String path = data.getStringExtra(IntentUtils.EXTRA_PATH_RESULT);
-                ImageEditorRequest.open(this, paths);
+//                ImageEditorRequest.open(this, paths);
 //                sendImage(mPaths);
+                Uri mUri = Uri.fromFile(new File(paths));
+                CropImage.activity(mUri)
+                        .start(this);
             }
         } else if (requestCode == PICK_MUSIC_REQUEST && resultCode == RESULT_OK) {
 
@@ -2360,17 +2454,21 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
 
         }else if (requestCode == ImageEditor.RC_IMAGE_EDITOR && resultCode == Activity.RESULT_OK) {
             String imagePath = data.getStringExtra(ImageEditor.EXTRA_EDITED_PATH);
+            String etMessage = data.getStringExtra("etMessage");
+
             if(gallaryPicked){
-                sendImage(imagePath,false);
+                sendImage(imagePath,false, etMessage);
             }else{
-                sendImage(imagePath, true);
+                sendImage(imagePath, true, etMessage);
             }
 
         } else if (requestCode == CAMERA_REQUEST && resultCode != ResultCodes.CAMERA_ERROR_STATE) {
 
             if (resultCode == ResultCodes.IMAGE_CAPTURE_SUCCESS) {
                 String path = data.getStringExtra(IntentUtils.EXTRA_PATH_RESULT);
-                ImageEditorRequest.open(this, path);
+                Uri mUri = Uri.fromFile(new File(path));
+                CropImage.activity(mUri)
+                        .start(this);
 
             } else if (resultCode == ResultCodes.VIDEO_RECORD_SUCCESS) {
                 String path = data.getStringExtra(IntentUtils.EXTRA_PATH_RESULT);
@@ -2492,14 +2590,47 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         Message message = new MessageCreator.Builder(user, MessageType.SENT_TEXT).quotedMessage(getQuotedMessage()).text(text).build();
         ServiceHelper.startNetworkRequest(this, message.getMessageId(), message.getChatId());
         etMessage.setText("");
+        SharedPreferences preferences = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("etMessage","");
+        editor.putString("receiverUid","");
+        editor.apply();
         hideReplyLayout();
     }
 
     //"isFromCamera" is when taking a picture ,because taking a picture from camera will save it directly in the app folder
     //send only one image
-    private void sendImage(String filePath, boolean isFromCamera) {
+
+    private void sendImage(String filePath, boolean isFromCamera, String finalMessage) {
+        SharedPreferences pref = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("picMessage",finalMessage);
+        editor.apply();
         Message message = new MessageCreator.Builder(user, MessageType.SENT_IMAGE).quotedMessage(getQuotedMessage()).path(filePath).fromCamera(isFromCamera).build();
+        message.setContent(finalMessage);
         ServiceHelper.startNetworkRequest(this, message.getMessageId(), message.getChatId());
+//        updateMessage();
+        Log.i("newMessageId",message.getMessageId()+","+ message.getContent());
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                ref.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        HashMap<String, Object> map = new HashMap<>();
+//                        map.put("content",snapshot.child("content").getValue().toString()+"\n"+
+//                                pref.getString("picMessage",""));
+//                        ref.updateChildren(map);
+//                        Log.i("mappppin",map.toString());
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                    }
+//                });
+//            }
+//        },5000);
         updateChat(message);
         hideReplyLayout();
     }
@@ -2656,6 +2787,13 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
         if (!isInActionMode) {
             toolbar.getMenu().clear();
             toolbar.inflateMenu(R.menu.menu_action_chat);
+            MenuItem item = currentMenu.findItem(R.id.starMsg);
+            final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
+            for (final Message message : selectedItemsForActionMode) {
+                if(starMessages.contains(message.getMessageId())){
+                    item.setIcon(R.drawable.ic_baseline_star_24);
+                }
+            }
             hideOrShowUserInfo(true);
         }
 

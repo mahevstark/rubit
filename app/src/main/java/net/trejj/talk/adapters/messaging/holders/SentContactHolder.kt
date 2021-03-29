@@ -23,8 +23,8 @@ class SentContactHolder(context: Context, itemView: View) : BaseSentHolder(conte
 
     override var contactHolderInteraction: ContactHolderInteraction? = null
 
-    override fun bind(message: Message,user: User) {
-        super.bind(message,user)
+    override fun bind(message: Message,user: User, starMessage: ArrayList<String>) {
+        super.bind(message,user,starMessage)
         //set contact name
         tvContactName.text = message.content
 

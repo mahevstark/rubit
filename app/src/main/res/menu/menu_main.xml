@@ -14,6 +14,11 @@
         android:icon="@drawable/ic_group_add"
         android:title="@string/new_group"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/starMsg"
+        android:icon="@drawable/ic_baseline_star_border_24"
+        android:title="@string/starred_msg"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/buyCredit"

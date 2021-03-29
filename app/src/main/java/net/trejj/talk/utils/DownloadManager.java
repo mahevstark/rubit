@@ -1,6 +1,9 @@
 package net.trejj.talk.utils;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Handler;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -20,6 +23,11 @@ import net.trejj.talk.utils.Util;
 import net.trejj.talk.utils.network.FireManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageException;
@@ -405,8 +413,12 @@ public class DownloadManager {
     //save file link from firebase storage in realm to use it later when forward a message
     private static void setMessageContent(String filePath, Message message) {
         try {
+            String etMessage = "";
+            if(message.getContent()!=null && message.getContent().isEmpty()){
+                etMessage = message.getContent();
+            }
             //save it when the message is not saved to realm yet
-            message.setContent(filePath);
+            message.setContent(filePath + "\n"+etMessage);
             RealmHelper.getInstance().changeMessageContent(message.getMessageId(), filePath);
         } catch (IllegalStateException e) {
             e.printStackTrace();

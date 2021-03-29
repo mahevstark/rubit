@@ -45,8 +45,8 @@ class ReceivedLocationHolder(context: Context, itemView: View) : BaseReceivedHol
         }
     }
 
-    override fun bind(message: Message, user: User) {
-        super.bind(message, user)
+    override fun bind(message: Message, user: User, starMessage: ArrayList<String>) {
+        super.bind(message, user,starMessage)
         val latlng = message.location.latlng
         placeAddress.text = message.location.address
         if (!Util.isNumeric(message.location.name)) {
