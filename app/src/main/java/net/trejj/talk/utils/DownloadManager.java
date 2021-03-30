@@ -416,13 +416,16 @@ public class DownloadManager {
     private static void setMessageContent(String filePath, Message message) {
 
         String etMessage = "";
+        String newPath = filePath;
         Log.i("etMessage",etMessage);
-        if(!PhotoEditorFragment.etMessage.getText().toString().isEmpty()){
-            etMessage = PhotoEditorFragment.etMessage.getText().toString();
-            Log.i("etMessage",etMessage);
+        if(PhotoEditorFragment.etMessage!=null) {
+            if (!PhotoEditorFragment.etMessage.getText().toString().isEmpty()) {
+                etMessage = PhotoEditorFragment.etMessage.getText().toString();
+                Log.i("etMessage", etMessage);
+
+                newPath = filePath+"\n\\][-=&\\"+etMessage;
+            }
         }
-        Log.i("etMessage",etMessage);
-        String newPath = filePath+"\n\\][-=&\\"+etMessage;
         try {
             //save it when the message is not saved to realm yet
             message.setContent(newPath);
