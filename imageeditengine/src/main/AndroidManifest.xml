@@ -8,8 +8,7 @@
   <application>
     <activity
         android:name=".ImageEditActivity"
-        android:theme="@style/LibAppTheme"
-        android:windowSoftInputMode="adjustNothing">
+        android:theme="@style/LibAppTheme">
     </activity>
   </application>
 

@@ -105,6 +105,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.main.messaging.ChatActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize"
             android:label=""
             android:parentActivityName=".activities.main.MainActivity"
             android:screenOrientation="portrait"

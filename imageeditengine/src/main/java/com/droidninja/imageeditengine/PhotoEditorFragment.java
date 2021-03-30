@@ -64,7 +64,7 @@ public class PhotoEditorFragment extends BaseFragment
     RecyclerView filterRecylerview;
     View filterLayout;
     View filterLabel;
-    EditText etMessage;
+    public static EditText etMessage;
     FloatingActionButton doneBtn;
     private Bitmap mainBitmap;
     private LruCache<Integer, Bitmap> cacheStack;

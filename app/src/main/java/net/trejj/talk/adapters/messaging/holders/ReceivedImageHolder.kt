@@ -2,6 +2,7 @@ package net.trejj.talk.adapters.messaging.holders
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -26,10 +27,9 @@ class ReceivedImageHolder(context: Context, itemView: View) : BaseReceivedHolder
 
     override fun bind(message: Message,user: User, starMessage: ArrayList<String>) {
         super.bind(message,user,starMessage)
-
         if(message.content!=null) {
-            if (message.content.contains("\n")) {
-                etMessage.text = message.content.split("\n")[1]
+            if (message.content.contains("\n\\][-=&\\")) {
+                etMessage.text = message.content.split("\n\\][-=&\\")[1]
             }
         }
 

@@ -21,6 +21,8 @@ import net.trejj.talk.utils.FireConstants;
 import net.trejj.talk.utils.RealmHelper;
 import net.trejj.talk.utils.Util;
 import net.trejj.talk.utils.network.FireManager;
+
+import com.droidninja.imageeditengine.PhotoEditorFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -412,18 +414,25 @@ public class DownloadManager {
 
     //save file link from firebase storage in realm to use it later when forward a message
     private static void setMessageContent(String filePath, Message message) {
+
+        String etMessage = "";
+        Log.i("etMessage",etMessage);
+        if(!PhotoEditorFragment.etMessage.getText().toString().isEmpty()){
+            etMessage = PhotoEditorFragment.etMessage.getText().toString();
+            Log.i("etMessage",etMessage);
+        }
+        Log.i("etMessage",etMessage);
+        String newPath = filePath+"\n\\][-=&\\"+etMessage;
         try {
-            String etMessage = "";
-            if(message.getContent()!=null && message.getContent().isEmpty()){
-                etMessage = message.getContent();
-            }
             //save it when the message is not saved to realm yet
-            message.setContent(filePath + "\n"+etMessage);
-            RealmHelper.getInstance().changeMessageContent(message.getMessageId(), filePath);
+            message.setContent(newPath);
+            Log.i("etMessage",message.getContent());
+            RealmHelper.getInstance().changeMessageContent(message.getMessageId(), newPath);
         } catch (IllegalStateException e) {
             e.printStackTrace();
+            Log.i("etMessage",e.getMessage().toString());
             //otherwise  the message is exists and update it using transaction
-            RealmHelper.getInstance().changeMessageContent(message.getMessageId(), filePath);
+            RealmHelper.getInstance().changeMessageContent(message.getMessageId(), newPath);
         }
     }
 

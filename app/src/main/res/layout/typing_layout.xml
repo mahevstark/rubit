@@ -26,6 +26,7 @@
 
 
     <net.trejj.talk.views.ChatEditText
+        android:focusable="true"
         android:textColor="@color/colorText"
         android:id="@+id/et_message"
         android:layout_width="0dp"

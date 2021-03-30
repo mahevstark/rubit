@@ -584,6 +584,7 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
                     String text = etMessage.getText().toString();
                     sendMessage(text);
                 }else{
+
                     String text = etMessage.getText().toString();
                     updateMessage(text);
                 }
@@ -2090,8 +2091,12 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
     private void setUpdateMessage(){
         final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
         for (final Message message : selectedItemsForActionMode) {
-            isEdited = true;
-            etMessage.setText(message.getContent());
+            if(MessageType.isSentText(message.getType())) {
+                isEdited = true;
+                etMessage.setText(message.getContent());
+            }else{
+                Toast.makeText(this, "Cannot edit received messages", Toast.LENGTH_SHORT).show();
+            }
         }
     }
     private void updateMessage(String text) {
@@ -2437,10 +2442,14 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
             } else {
                 String path = data.getStringExtra(IntentUtils.EXTRA_PATH_RESULT);
 //                ImageEditorRequest.open(this, paths);
-//                sendImage(mPaths);
-                Uri mUri = Uri.fromFile(new File(paths));
-                CropImage.activity(mUri)
-                        .start(this);
+//
+                if(paths.contains(",")){
+                    sendImage(mPaths);
+                }else {
+                    Uri mUri = Uri.fromFile(new File(paths));
+                    CropImage.activity(mUri)
+                            .start(this);
+                }
             }
         } else if (requestCode == PICK_MUSIC_REQUEST && resultCode == RESULT_OK) {
 
@@ -2602,35 +2611,10 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
     //send only one image
 
     private void sendImage(String filePath, boolean isFromCamera, String finalMessage) {
-        SharedPreferences pref = getSharedPreferences("net.trejj.talk",MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("picMessage",finalMessage);
-        editor.apply();
         Message message = new MessageCreator.Builder(user, MessageType.SENT_IMAGE).quotedMessage(getQuotedMessage()).path(filePath).fromCamera(isFromCamera).build();
-        message.setContent(finalMessage);
         ServiceHelper.startNetworkRequest(this, message.getMessageId(), message.getChatId());
-//        updateMessage();
         Log.i("newMessageId",message.getMessageId()+","+ message.getContent());
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                ref.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                        HashMap<String, Object> map = new HashMap<>();
-//                        map.put("content",snapshot.child("content").getValue().toString()+"\n"+
-//                                pref.getString("picMessage",""));
-//                        ref.updateChildren(map);
-//                        Log.i("mappppin",map.toString());
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                });
-//            }
-//        },5000);
+
         updateChat(message);
         hideReplyLayout();
     }

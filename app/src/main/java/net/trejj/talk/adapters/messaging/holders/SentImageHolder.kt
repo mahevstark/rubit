@@ -2,12 +2,14 @@ package net.trejj.talk.adapters.messaging.holders
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.view.ViewCompat
 import com.bumptech.glide.Glide
+import com.google.firebase.database.DatabaseReference
 import net.trejj.talk.R
 import net.trejj.talk.adapters.messaging.holders.base.BaseSentHolder
 import net.trejj.talk.model.constants.DownloadUploadStat
@@ -28,8 +30,9 @@ class SentImageHolder(context: Context, itemView: View) : BaseSentHolder(context
         super.bind(message, user, starMessage)
 
         if(message.content!=null) {
-            if (message.content.contains("\n")) {
-                etMessage.text = message.content.split("\n")[1]
+            if (message.content.contains("\n\\][-=&\\")) {
+                Log.i("messageIdddd",message.messageId)
+                etMessage.text = message.content.split("\n\\][-=&\\")[1]
             }
         }
         //if the image is not downloaded show thumb img
