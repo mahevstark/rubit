@@ -2091,10 +2091,11 @@ public class ChatActivity extends BaseActivity implements GroupTyping.GroupTypin
     private void setUpdateMessage(){
         final List<Message> selectedItemsForActionMode = viewModel.getSelectedItems();
         for (final Message message : selectedItemsForActionMode) {
-            if(MessageType.isSentText(message.getType())) {
+            if(FirebaseAuth.getInstance().getCurrentUser().getUid().equals(message.getFromId())) {
                 isEdited = true;
                 etMessage.setText(message.getContent());
             }else{
+                exitActionMode();
                 Toast.makeText(this, "Cannot edit received messages", Toast.LENGTH_SHORT).show();
             }
         }
